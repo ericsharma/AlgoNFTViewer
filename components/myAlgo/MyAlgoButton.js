@@ -1,7 +1,7 @@
 import { Button } from "theme-ui";
 import MyAlgo from "@randlabs/myalgo-connect";
 
-export default function MyAlgoButton() {
+export default function MyAlgoButton({ setAddr }) {
   const myAlgoWallet = new MyAlgo();
   const connectToMyAlgo = async () => {
     try {
@@ -9,12 +9,16 @@ export default function MyAlgoButton() {
       const accounts = await myAlgoWallet.connect();
 
       const addresses = accounts.map((account) => account.address);
-      console.log(addresses);
-      debugger;
+      setAddr(addresses[0]);
+      //   console.log(addresses);
     } catch (err) {
       console.error(err);
     }
   };
 
-  return <Button onClick={() => connectToMyAlgo()}> CLICK ME </Button>;
+  return (
+    <Button sx={{ color: "black" }} onClick={() => connectToMyAlgo()}>
+      CLICK ME
+    </Button>
+  );
 }

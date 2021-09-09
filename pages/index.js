@@ -1,50 +1,77 @@
 /** @jsxImportSource theme-ui */
 import Head from "next/head";
 import fetch from "node-fetch";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { handleTxRequest } from "../components/TxDataRequest";
 import TxDataForm from "../components/TxDataForm";
-import { Box, Label, Text, Button, Heading } from "@theme-ui/components";
+import { Box, Label, Text, Button, Heading, Flex } from "@theme-ui/components";
 import NavComponent from "../components/Nav/NavComponent";
+import dynamic from "next/dynamic";
+import NftReducer from "../Reducers/NftReducer";
+import { ACTIONS } from "../Reducers/ACTIONS";
+import { localStorageHandler } from "../DataHandlers/LocalStorage";
+
+const AlgoButton = dynamic(() => import("../components/myAlgo/MyAlgoButton"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
-  const [src, setSrc] = useState("");
-  const [txId, setTxId] = useState("");
-  const [name, setName] = useState("");
+
   // const txId= 'SJCSJYSE3PGECAZCQFUDAUGS7OFSSGFNFPAYGUP6CIYPPK5YWONA'
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [type, setType] = useState("");
+  const [addr, setAddr] = useState("");
+
+  const [nftState, dispatch] = useReducer(NftReducer, {
+    src: null,
+    txId: null,
+    formSubmitted: null,
+    type: null,
+    addr: null,
+    name: null,
+    fileType: null,
+  });
+
+  const handleReset = () => {
+    console.log("hit");
+    setFormSubmitted(false);
+    setLoaded(false);
+  };
 
   const handleSubmit = () => {
-    handleTxRequest(setSrc, setLoaded, txId, setType, setName);
-    setFormSubmitted();
+    handleTxRequest(dispatch, nftState, setLoaded);
+    setFormSubmitted(true);
   };
 
-  // useEffect(() => {
-  //   const myAlgoWallet = new MyAlgo();
-  // }, []);
+  const retrieveLocalStorage = () => {
+    const payload = JSON.parse(localStorage.getItem(addr));
+    console.log(payload);
+  };
+
+  const handleLocalStorageSubmit = () => {
+    const payload = {
+      txId: nftState.txId,
+      src: nftState.src,
+      name: nftState.name,
+      fileType: nftState.fileType,
+    };
+    localStorageHandler(addr, payload);
+  };
 
   useEffect(() => {
-    console.log(type);
-  }, [type]);
+    console.log(nftState.type);
+  }, [nftState.type]);
 
-  console.log(type);
-
-  console.log("src says:" + src);
+  console.log("src says:" + nftState.src);
   const onInputChange = (event) => {
-    setTxId(event.target.value);
+    dispatch({
+      type: ACTIONS.setTxId,
+      payload: { txId: event.target.value },
+    });
+
+    console.log(nftState.txId);
   };
-
-  // const connectToMyAlgo = async () => {
-  //   try {
-  //     const accounts = await myAlgoWallet.connect();
-
-  //     const addresses = accounts.map((account) => account.address);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   return (
     <div>
@@ -56,16 +83,37 @@ export default function Home() {
 
       <main sx={{ textAlign: "center" }}>
         <NavComponent sx={{ ml: 50 }} />
+        <Flex sx={{ alignContent: "center" }}>
+          <AlgoButton setAddr={setAddr} />
+          <Button onClick={() => handleReset()} sx={{ ml: 5, color: "black" }}>
+            {" "}
+            Reset{" "}
+          </Button>
+          <Button
+            onClick={() => handleLocalStorageSubmit()}
+            sx={{ ml: 5, color: "black" }}
+          >
+            Save to Local Storage
+          </Button>
+          <Button
+            onClick={() => retrieveLocalStorage()}
+            sx={{ ml: 5, color: "black" }}
+          >
+            retrieveLocalStorage
+          </Button>
+        </Flex>
+
+        <Text>The address is {addr}</Text>
         {/* <Button onClick={() => connectToMyAlgo}> Click Me </Button> */}
 
         {loaded ? (
-          type === "image/gif" ? (
-            <img src={src} />
+          nftState.fileType === "image/gif" ? (
+            <img src={nftState.src} />
           ) : (
             <>
-              <Text>{name}</Text>
+              <Text>{nftState.name}</Text>
               <video controls autoPlay name="media" crossOrigin="anonymous">
-                <source src={src} type="video/mp4" />
+                <source src={nftState.src} type="video/mp4" />
               </video>
             </>
           )

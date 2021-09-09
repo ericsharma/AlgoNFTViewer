@@ -1,3 +1,5 @@
+import { ACTIONS } from "../Reducers/ACTIONS";
+
 async function typeChecker(url) {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -22,14 +24,21 @@ async function getAssetId(txId) {
   return params;
 }
 
-export function handleTxRequest(setSrc, setLoaded, txId, setType, setName) {
+export function handleTxRequest(dispatch, nftState, setLoaded) {
   //this is bad because the order of the parameters matters and can lead to weird bugs
 
-  const params = getAssetId(txId);
+  const params = getAssetId(nftState.txId);
   params.then((params) => {
-    setSrc(params.url);
+    // setSrc(params.url);
+    dispatch({ type: ACTIONS.setSrc, payload: { src: params.url } });
+    console.log(nftState.src);
     setLoaded(true);
     console.log(params.name);
-    typeChecker(params.url).then((blob) => setType(blob.type));
+    dispatch({ type: ACTIONS.setName, payload: { name: params.name } });
+    // typeChecker(params.url).then((blob) => setType(blob.type));
+    typeChecker(params.url).then((blob) => {
+      dispatch({ type: ACTIONS.setFileType, payload: { fileType: blob.type } });
+      console.log("nftState says" + nftState.fileType);
+    });
   });
 }
