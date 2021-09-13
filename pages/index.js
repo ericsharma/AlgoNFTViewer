@@ -4,7 +4,15 @@ import fetch from "node-fetch";
 import { useState, useEffect, useReducer } from "react";
 import { handleTxRequest } from "../components/TxDataRequest";
 import TxDataForm from "../components/TxDataForm";
-import { Box, Label, Text, Button, Heading, Flex } from "@theme-ui/components";
+import {
+  Box,
+  Label,
+  Text,
+  Button,
+  Heading,
+  Flex,
+  Link,
+} from "@theme-ui/components";
 import NavComponent from "../components/Nav/NavComponent";
 import dynamic from "next/dynamic";
 import NftReducer from "../Reducers/NftReducer";
@@ -21,7 +29,7 @@ export default function Home() {
   // const txId= 'SJCSJYSE3PGECAZCQFUDAUGS7OFSSGFNFPAYGUP6CIYPPK5YWONA'
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [type, setType] = useState("");
-  const [addr, setAddr] = useState("");
+  const [addr, setAddr] = useState(null);
 
   const [nftState, dispatch] = useReducer(NftReducer, {
     src: null,
@@ -101,17 +109,27 @@ export default function Home() {
           >
             retrieveLocalStorage
           </Button>
+
+          <Link href={`/${addr}`}>
+            <a>Go to Collection</a>
+          </Link>
         </Flex>
 
         <Text>The address is {addr}</Text>
         {/* <Button onClick={() => connectToMyAlgo}> Click Me </Button> */}
 
-        {loaded ? (
-          nftState.fileType === "image/gif" ? (
-            <img src={nftState.src} />
+        {loaded && nftState.fileType ? (
+          nftState.fileType.includes("image") ? (
+            <>
+              <Text>{nftState.name} </Text>
+              <img
+                src={nftState.src}
+                sx={{ maxHeight: 500, height: "50%", width: "auto" }}
+              />
+            </>
           ) : (
             <>
-              <Text>{nftState.name}</Text>
+              <Text>{nftState.name} </Text>
               <video controls autoPlay name="media" crossOrigin="anonymous">
                 <source src={nftState.src} type="video/mp4" />
               </video>
