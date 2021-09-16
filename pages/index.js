@@ -1,9 +1,11 @@
 /** @jsxImportSource theme-ui */
 import Head from "next/head";
 import fetch from "node-fetch";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import { handleTxRequest } from "../components/TxDataRequest";
 import TxDataForm from "../components/TxDataForm";
+import { UserContext } from "../Context/UserProvider";
+
 import {
   Box,
   Label,
@@ -18,6 +20,7 @@ import dynamic from "next/dynamic";
 import NftReducer from "../Reducers/NftReducer";
 import { ACTIONS } from "../Reducers/ACTIONS";
 import { localStorageHandler } from "../DataHandlers/LocalStorage";
+import { InitializeColorMode } from "@theme-ui/color-modes";
 
 const AlgoButton = dynamic(() => import("../components/myAlgo/MyAlgoButton"), {
   ssr: false,
@@ -25,21 +28,23 @@ const AlgoButton = dynamic(() => import("../components/myAlgo/MyAlgoButton"), {
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
-
+  const { user, login } = useContext(UserContext);
   // const txId= 'SJCSJYSE3PGECAZCQFUDAUGS7OFSSGFNFPAYGUP6CIYPPK5YWONA'
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [type, setType] = useState("");
   const [addr, setAddr] = useState(null);
-
-  const [nftState, dispatch] = useReducer(NftReducer, {
+  // const [loggedIn, setLoggedIn] = useState(false);
+  const intialState = {
     src: null,
     txId: null,
     formSubmitted: null,
-    type: null,
-    addr: null,
     name: null,
     fileType: null,
-  });
+    assetId: null,
+    block: null,
+    pricePaid: null,
+  };
+
+  const [nftState, dispatch] = useReducer(NftReducer, intialState);
 
   const handleReset = () => {
     console.log("hit");
@@ -63,6 +68,7 @@ export default function Home() {
       src: nftState.src,
       name: nftState.name,
       fileType: nftState.fileType,
+      pricePaid: nftState.pricePaid,
     };
     localStorageHandler(addr, payload);
   };
@@ -71,7 +77,6 @@ export default function Home() {
     console.log(nftState.type);
   }, [nftState.type]);
 
-  console.log("src says:" + nftState.src);
   const onInputChange = (event) => {
     dispatch({
       type: ACTIONS.setTxId,
@@ -80,6 +85,8 @@ export default function Home() {
 
     console.log(nftState.txId);
   };
+
+  console.log("userIs" + user.name);
 
   return (
     <div>
@@ -92,7 +99,7 @@ export default function Home() {
       <main sx={{ textAlign: "center" }}>
         <NavComponent sx={{ ml: 50 }} />
         <Flex sx={{ alignContent: "center" }}>
-          <AlgoButton setAddr={setAddr} />
+          <AlgoButton setAddr={setAddr} login={login} />
           <Button onClick={() => handleReset()} sx={{ ml: 5, color: "black" }}>
             {" "}
             Reset{" "}
@@ -111,17 +118,18 @@ export default function Home() {
           </Button>
 
           <Link href={`/${addr}`}>
-            <a>Go to Collection</a>
+            {/* <a>Go to Collection</a> */}
+            go to collection
           </Link>
         </Flex>
-
-        <Text>The address is {addr}</Text>
-        {/* <Button onClick={() => connectToMyAlgo}> Click Me </Button> */}
 
         {loaded && nftState.fileType ? (
           nftState.fileType.includes("image") ? (
             <>
-              <Text>{nftState.name} </Text>
+              <Text>
+                {nftState.name} paid {nftState.pricePaid}
+              </Text>
+
               <img
                 src={nftState.src}
                 sx={{ maxHeight: 500, height: "50%", width: "auto" }}
@@ -129,7 +137,9 @@ export default function Home() {
             </>
           ) : (
             <>
-              <Text>{nftState.name} </Text>
+              <Text>
+                {nftState.name} paid {nftState.pricePaid}{" "}
+              </Text>
               <video controls autoPlay name="media" crossOrigin="anonymous">
                 <source src={nftState.src} type="video/mp4" />
               </video>

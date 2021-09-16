@@ -6,7 +6,7 @@ export default function TxDataForm({ onSubmit, onChange }) {
     console.log(event.key);
   };
   return (
-    <Box as="form" sx={{ display: "inline-block" }}>
+    <Box sx={{ display: "inline-block" }}>
       <Label> Submit Transaction ID</Label>
       <form>
         <Label sx={{ mb: 1, mt: 2 }}>Enter Tx Id</Label>

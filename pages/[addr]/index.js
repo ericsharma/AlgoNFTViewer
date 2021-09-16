@@ -1,18 +1,8 @@
 /** @jsxImportSource theme-ui */
 import { useRouter } from "next/router";
-import Link from "next/link";
-import NftReducer from "../../Reducers/NftReducer";
-import { useEffect, useState } from "react";
-
-// export async function getStaticProps() {
-//   console.log(allProjectsId);
-
-//   return {
-//     props: {
-//       allProjectsId,
-//     },
-//   };
-// }
+import { useEffect, useState, useContext } from "react";
+import { Box, Flex, Text } from "@theme-ui/components";
+import { UserContext } from "../../Context/UserProvider";
 
 const Collection = () => {
   const router = useRouter();
@@ -22,14 +12,43 @@ const Collection = () => {
 
   const MapCollection = ({ collection }) => {
     return collection.map((nft) => {
-      debugger;
       return (
         <>
-          <img
-            src={nft.src}
-            sx={{ maxHeight: 500, height: "50%", width: "auto" }}
-          />
-          ;<li>{nft.name}</li>;
+          <Flex
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 10,
+            }}
+          >
+            <Text sx={{ display: "inline-block" }}>
+              Title: {nft.name} ----- Price Paid: {nft.pricePaid}
+            </Text>
+          </Flex>
+
+          <Flex
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 10,
+            }}
+          >
+            {/* without inline-block nft name and image are rendered same line */}
+            {nft.fileType.includes("image") ? (
+              <img
+                src={nft.src}
+                sx={{ maxHeight: 500, height: "50%", width: "auto" }}
+              />
+            ) : (
+              <>
+                <video controls autoPlay name="media" crossOrigin="anonymous">
+                  <source src={nft.src} type="video/mp4" />
+                </video>
+              </>
+            )}
+          </Flex>
         </>
       );
     });
@@ -37,27 +56,31 @@ const Collection = () => {
 
   const retrieveLocalStorage = (addr) => {
     if (addr) {
+      //This is to stop setting of collection when params haven't coneback from Router object
       setCollection(JSON.parse(localStorage.getItem(addr)));
       setLoaded(true);
     }
-
-    // const payload = JSON.parse(localStorage.getItem(addr));
   };
 
   useEffect(() => {
     retrieveLocalStorage(addr);
+    console.log(sessionStorage.getItem("user") + " from the collections page");
   }, [addr]);
-  console.log(collection);
-
-  // const collection = retrieveLocalStorage(addr);
-
-  // console.log(collection);
 
   return (
     <>
-      <h1>Post: {addr}</h1>
-
-      {loaded && <MapCollection collection={collection} />}
+      <Flex
+        sx={{
+          alignItems: "center",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h4 sx={{ display: "inline-block" }}>Wallet: {addr}</h4>
+      </Flex>
+      <Box sx={{ alignItems: "center", maxWidth: "50%", ml: "30%" }}>
+        {loaded && <MapCollection collection={collection} />}
+      </Box>
     </>
   );
 };

@@ -5,4 +5,7 @@ export const ACTIONS = {
   setFormSubmitted: "SET-FORM-SUBMITTED",
   setSrc: "SET-SRC",
   setName: "SET-NAME",
+  setAssetId: "SET-ASSET-ID",
+  setBlock: "SET-BLOCK",
+  setPricePaid: "SET-AMOUNT-PAID",
 };

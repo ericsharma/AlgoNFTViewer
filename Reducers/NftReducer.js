@@ -19,6 +19,14 @@ export default function NftReducer(nftState, action) {
     case ACTIONS.setName:
       return { ...nftState, name: action.payload.name };
 
+    case ACTIONS.setAssetId:
+      return { ...nftState, assetId: action.payload.assetId };
+    case ACTIONS.setBlock:
+      return { ...nftState, block: action.payload.block };
+
+    case ACTIONS.setPricePaid:
+      return { ...nftState, pricePaid: action.payload.pricePaid };
+
     default:
       throw new Error(`Unhandled type: ${action.type}`);
   }
