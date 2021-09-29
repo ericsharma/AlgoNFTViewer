@@ -1,29 +1,29 @@
-import { createContext, useState } from "react";
-export const UserContext = createContext();
+import { createContext, useState } from "react"
+export const UserContext = createContext()
 
 export default function UserProvider({ children }) {
-  // User is the name of the "data" that gets stored in context
-  const [user, setUser] = useState({ name: " false", auth: true });
-
-  // Login updates the user data with a name parameter
-  const login = (name) => {
-    setUser((user) => ({
-      name: name,
-      auth: true,
-    }));
-  };
+  const [user, setUser] = useState(null)
+  //
+  const login = (addr) => {
+    sessionStorage.setItem("user", addr)
+    setUserToSession()
+  }
 
   // Logout updates the user data to default
   const logout = () => {
-    setUser((user) => ({
-      name: "",
-      auth: false,
-    }));
-  };
+    sessionStorage.clear()
+    setUser(null)
+  }
+
+  const setUserToSession = () => {
+    sessionStorage.getItem("user")
+      ? setUser(sessionStorage.getItem("user"))
+      : setUser(null)
+  }
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ login, logout, setUserToSession, user }}>
       {children}
     </UserContext.Provider>
-  );
+  )
 }

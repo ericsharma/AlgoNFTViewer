@@ -1,76 +1,71 @@
-import { ACTIONS } from "../Reducers/ACTIONS";
+import { ACTIONS } from "../Reducers/ACTIONS"
 
 async function typeChecker(url) {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return blob;
+  const blob = await fetch(url).then((res) => res.blob())
+  return blob
 }
 async function getUrl(assetId) {
-  const reqUrl = `https://algoexplorerapi.io/idx2/v2/assets/${assetId}`;
-  const txRes = await fetch(reqUrl);
-  const txData = await txRes.json();
-
-  const assetUrl = await txData.asset.params;
-
-  return assetUrl;
+  const reqUrl = `https://algoexplorerapi.io/idx2/v2/assets/${assetId}`
+  const assetUrl = await fetch(reqUrl)
+    .then((res) => res.json())
+    .then((json) => json.asset.params)
+  return assetUrl
 }
 
-async function getAssetId(txId, dispatch) {
-  const txRes = await fetch(
+async function getAssetInformation(txId, dispatch) {
+  const txData = await fetch(
     `https://algoexplorerapi.io/v1/transaction/${txId}`
-  );
+  ).then((res) => res.json())
+  // necessary parameters for finding price
+  const round = await txData.round
+  const rcv = await txData.curxfer.rcv
+  const closeto = await txData.curxfer.closeto //don't need closeto
+  const price = await pricePaid(rcv, closeto, round)
+  console.log(price)
 
-  const txData = await txRes.json();
-  const round = await txData.round;
-  const rcv = await txData.curxfer.rcv;
-  const closeto = await txData.curxfer.closeto;
-
-  const price = await pricePaid(rcv, closeto, round, dispatch);
-  console.log(price);
+  dispatch({
+    type: ACTIONS.setPricePaid,
+    payload: {
+      pricePaid: price,
+    },
+  })
 
   dispatch({
     type: ACTIONS.setBlock,
     payload: { block: { round: round, closeto: closeto, rcv: rcv } },
-  });
-  const assetId = await txData.curxfer.id;
-  dispatch({ type: ACTIONS.setAssetId, payload: { assetId: assetId } });
-  const params = await getUrl(assetId);
-  return params;
+  })
+  const assetId = await txData.curxfer.id
+  dispatch({ type: ACTIONS.setAssetId, payload: { assetId: assetId } })
+  const params = await getUrl(assetId)
+  return params
 }
 
-async function pricePaid(rcv, closeto, block, dispatch) {
-  const reqUrl = `https://algoexplorerapi.io/idx2/v2/blocks/${block}`;
-  const response = await fetch(reqUrl);
-  const blockData = await response.json();
-  const transactions = await blockData.transactions;
+async function pricePaid(rcv, closeto, block) {
+  const reqUrl = `https://algoexplorerapi.io/idx2/v2/blocks/${block}`
+  const transactions = await fetch(reqUrl)
+    .then((res) => res.json())
+    .then((blockData) => blockData.transactions)
 
+  let num
   // ToDo: Lookinto whether differing asset prices in same block is possible
   for (let transaction of transactions) {
     if (transaction["tx-type"] === "pay" && transaction["sender"] === rcv) {
-      dispatch({
-        type: ACTIONS.setPricePaid,
-        payload: {
-          pricePaid:
-            Number(transaction["payment-transaction"]["amount"]) / 1000000.0,
-        },
-      });
+      num = Number(transaction["payment-transaction"]["amount"]) / 1000000.0
     }
   }
+  return num
 }
 export function handleTxRequest(dispatch, nftState, setLoaded) {
   //this is bad because the order of the parameters matters and can lead to weird bugs
 
-  const assetInformation = getAssetId(nftState.txId, dispatch);
+  const assetInformation = getAssetInformation(nftState.txId, dispatch)
 
-  assetInformation.then((params) => {
-    dispatch({ type: ACTIONS.setSrc, payload: { src: params.url } });
-    setLoaded(true);
-    dispatch({ type: ACTIONS.setName, payload: { name: params.name } });
-    typeChecker(params.url).then((blob) => {
-      dispatch({ type: ACTIONS.setFileType, payload: { fileType: blob.type } });
-      console.log("nftState says assetId " + nftState.assetId);
-    });
-
-    console.log("nft price Paid says " + nftState.pricePaid);
-  });
+  assetInformation.then((asset) => {
+    dispatch({ type: ACTIONS.setSrc, payload: { src: asset.url } })
+    setLoaded(true)
+    dispatch({ type: ACTIONS.setName, payload: { name: asset.name } })
+    typeChecker(asset.url).then((blob) => {
+      dispatch({ type: ACTIONS.setFileType, payload: { fileType: blob.type } })
+    })
+  })
 }

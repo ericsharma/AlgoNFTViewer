@@ -1,26 +1,28 @@
 const entryExists = (currentState, newState) => {
-  return currentState.filter((entry) => entry.txId === newState.txId)
+  return currentState.filter((entry) => entry.txId === newState.txId).length !==
+    0
     ? true
-    : false;
-};
+    : false
+}
 
 export const localStorageHandler = (walletAddr, payload) => {
-  sessionStorage.setItem("user", walletAddr); //Persist wallet adress between page refreshes
+  console.log("hit")
+  sessionStorage.setItem("user", walletAddr) //Persist wallet adress between page refreshes
   if (localStorage.getItem(walletAddr) === null) {
-    localStorage.setItem(walletAddr, Object.assign(JSON.stringify([payload]))); //inititialize walletAddr to be an array with payload object at first index
-    return;
+    localStorage.setItem(walletAddr, Object.assign(JSON.stringify([payload]))) //inititialize walletAddr to be an array with payload object at first index
+    return
   }
-  const currentState = JSON.parse(localStorage.getItem(walletAddr));
+  const currentState = JSON.parse(localStorage.getItem(walletAddr))
 
   if (entryExists(currentState, payload)) {
-    console.log("Entry is already in localStorage");
+    console.log("Entry is already in localStorage")
     // Location for setting error message
-    return;
+    return
   }
 
   const newStateStr = JSON.stringify(
     Object.assign(currentState, currentState.push(payload))
-  );
+  )
 
-  localStorage.setItem(walletAddr, newStateStr);
-};
+  localStorage.setItem(walletAddr, newStateStr)
+}
