@@ -217,35 +217,65 @@ export const StyledNftVideo = ({ children, nftState, storageSubmit }) => {
     >
       <Box>
         <video loop autoPlay name="media" crossOrigin="anonymous" width="100%">
-          <source
-            src={nftState.src}
-            type="video/mp4"
-            sx={{ marginLeft: "auto" }}
-          />
+          <source src={nftState.src} type="video/mp4" />
         </video>
         {/* {children} */}
       </Box>
 
       <Box sx={{ p: "3" }}>
-        <Heading as="h2" mb={2}>
+        <Heading as="h2" mb={4}>
           {nftState.name}
         </Heading>
-
-        <Text mb={3}>
-          Seller <Badge mr={1}> {nftState.block.creatorAddress}</Badge>
-        </Text>
-
         <Divider />
-
-        <Text mb={3}>
-          Reciever <Badge mr={1}> {nftState.block.rcv}</Badge>
-        </Text>
-
+        <StyledRow
+          title={"Transaction ID"}
+          value={nftState.txId}
+          address={true}
+          divider={true}
+          tx={true}
+        />
+        <StyledRow
+          title={"Creator"}
+          value={nftState.block.creatorAddress}
+          address={true}
+          divider={true}
+        />
+        <StyledRow
+          title="Purchaser"
+          value={nftState.block.rcv}
+          address={true}
+          divider={true}
+        />
+        <StyledRow
+          title="Purchase Price"
+          value={nftState.pricePaid}
+          divider={true}
+          price={true}
+        />
+        <StyledRow
+          title="Time of Purchase"
+          value={nftState.timestamp.toString()}
+          divider={true}
+          date={true}
+        />
         <Flex>
-          <Badge mr={1}>{nftState.pricePaid} algo</Badge>
-          <Badge mr={3}>Id: {nftState.assetId}</Badge>
+          <Badge mr={1}>{nftState.pricePaid}</Badge>
+          <Badge mr={1}>Video</Badge>
           <Badge mr={1}>travel</Badge>
         </Flex>
+
+        <Button
+          onClick={storageSubmit}
+          sx={{
+            border: "1px solid",
+            borderColor: "border",
+            textAlign: "center",
+            borderRadius: "0",
+            width: "50%",
+          }}
+        >
+          Save to Local Storage?
+        </Button>
       </Box>
     </Card>
   )

@@ -27,6 +27,7 @@ export default function Home() {
   const [triggerTransition, setTriggerTransition] = useState(false)
   const [error, setError] = useState(false)
 
+  // Put these in a seperate file so you can import between index and collections.
   const executeAlertTransition = () => {
     setTriggerTransition(true)
     setTimeout(() => setTriggerTransition(false), 3000)
@@ -119,7 +120,11 @@ export default function Home() {
       </Head>
 
       <main>
-        <Header />
+        <Header
+          setAlertError={setAlertError}
+          setAlertMessage={setAlertMessage}
+          executeAlertTransition={executeAlertTransition}
+        />
 
         {!start ? (
           <Welcome setStart={setStart} />

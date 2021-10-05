@@ -7,6 +7,7 @@ import {
   Badge,
   Heading,
   Grid,
+  Button,
 } from "@theme-ui/components"
 import { ST } from "next/dist/shared/lib/utils"
 import { useContext, useEffect } from "react"
@@ -18,16 +19,30 @@ const AlgoButton = dynamic(() => import("../myAlgo/MyAlgoButton"), {
   ssr: false,
 })
 
-export default function Header({}) {
+export default function Header({
+  executeAlertTransition,
+  setAlertMessage,
+  setAlertError,
+}) {
   const { login, user, setUserToSession } = useContext(UserContext)
   useEffect(() => {
     console.log("dont do every time")
     setUserToSession()
   })
-
   const userTruncator = (user) => {
     return user.slice(0, 5) + "..." + user.slice(user.length - 5, user.length)
   }
+
+  const handleCollectionLink = (e) => {
+    if (localStorage.getItem(user) === null) {
+      e.preventDefault()
+      setAlertError()
+      setAlertMessage("Please save something to localstorage before proceeding")
+      executeAlertTransition()
+      return
+    }
+  }
+
   return (
     <Grid gap={2} columns={[3, "1fr 9fr 1fr"]} sx={{ mb: 3 }}>
       <Box sx={{ mr: "auto" }}>
@@ -49,10 +64,16 @@ export default function Header({}) {
           </Box>
           <Box sx={{ textAlign: "center" }}>
             {user && (
-              <StyledHeaderLink
-                href={`/${sessionStorage.getItem("user")}`}
-                defaultMessage="Collection"
-              ></StyledHeaderLink>
+              <Button
+                sx={{ all: "unset" }}
+                onClick={(e) => handleCollectionLink(e)}
+              >
+                <StyledHeaderLink
+                  onClick={(e) => handleCollectionLink(e)}
+                  href={`/${sessionStorage.getItem("user")}`}
+                  defaultMessage="Collection"
+                ></StyledHeaderLink>
+              </Button>
             )}
           </Box>
         </Grid>
