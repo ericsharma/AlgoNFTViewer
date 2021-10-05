@@ -8,4 +8,5 @@ export const ACTIONS = {
   setAssetId: "SET-ASSET-ID",
   setBlock: "SET-BLOCK",
   setPricePaid: "SET-AMOUNT-PAID",
-};
+  setTimestamp: "SET-TIMESTAMP",
+}

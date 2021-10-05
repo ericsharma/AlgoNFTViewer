@@ -15,37 +15,17 @@ import { StyledButton } from "../buttons/StyledButtons"
 import { StyledHeaderLink } from "../buttons/StyledLinks"
 import { StyledNftImage, StyledNftVideo } from "../Display/styles"
 
-export default function DisplayNft({ nftState }) {
+export default function DisplayNft({ nftState, storageSubmit }) {
   return nftState.fileType.includes("image") ? (
     <>
-      {/* <Text>
-        {nftState.name} paid {nftState.pricePaid}
-      </Text>
-
-      <Image
-        src={nftState.src}
-        sx={{ maxHeight: 500, height: "50%", width: "auto" }}
-        alt="image"
-      /> */}
-      <StyledNftImage nftState={nftState} />
+      <StyledNftImage nftState={nftState} storageSubmit={storageSubmit} />
     </>
   ) : (
     <>
-      <StyledNftVideo nftState={nftState}>
-        {/* <video loop autoPlay name="media" crossOrigin="anonymous" width="100%">
-          <source
-            src={nftState.src}
-            type="video/mp4"
-            sx={{ marginLeft: "auto" }}
-          />
-        </video> */}
-      </StyledNftVideo>
-      {/* <Text>
-        {nftState.name} paid {nftState.pricePaid}
-      </Text>
-      <video controls autoPlay name="media" crossOrigin="anonymous">
-        <source src={nftState.src} type="video/mp4" />
-      </video>*/}
+      <StyledNftVideo
+        nftState={nftState}
+        storageSubmit={storageSubmit}
+      ></StyledNftVideo>
     </>
   )
 }

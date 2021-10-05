@@ -19,18 +19,22 @@ import NftReducer from "../Reducers/NftReducer"
 import { ACTIONS } from "../Reducers/ACTIONS"
 import { localStorageHandler } from "../DataHandlers/LocalStorage"
 
-// const AlgoButton = dynamic(() => import("../components/myAlgo/MyAlgoButton"), {
-//   ssr: false,
-// })
-
 export default function Home() {
   const [loaded, setLoaded] = useState(false)
   const { logout } = useContext(UserContext)
-  const [start, setStart] = useState(false)
+  const [start, setStart] = useState(false) // think of something better
   const [alertMessage, setAlertMessage] = useState(null)
   const [triggerTransition, setTriggerTransition] = useState(false)
-  // const [triggerResetLocalStorage, setTriggerResetLocalStorage] =
-  //   useState(false)
+  const [error, setError] = useState(false)
+
+  const executeAlertTransition = () => {
+    setTriggerTransition(true)
+    setTimeout(() => setTriggerTransition(false), 3000)
+  }
+  const setAlertError = () => {
+    setError(true)
+    setTimeout(() => setError(false), 4000)
+  }
 
   const [formSubmitted, setFormSubmitted] = useState(false)
 
@@ -43,6 +47,7 @@ export default function Home() {
     assetId: null,
     block: null,
     pricePaid: null,
+    timestamp: null,
   }
 
   const [nftState, dispatch] = useReducer(NftReducer, intialState)
@@ -51,8 +56,7 @@ export default function Home() {
     setFormSubmitted(false)
     setLoaded(false)
     setAlertMessage("The form has been reset")
-    setTriggerTransition(true)
-    setTimeout(() => setTriggerTransition(false), 3000)
+    executeAlertTransition()
   }
 
   const handleSubmit = () => {
@@ -62,8 +66,12 @@ export default function Home() {
 
   const handleLocalStorageSubmit = () => {
     const sessionedUser = sessionStorage.getItem("user")
-    if (!nftState.txId || !sessionedUser)
+    if (!nftState.txId || !sessionedUser) {
+      setAlertError()
+      setAlertMessage("Either login or submit a valid transaction id")
+      executeAlertTransition()
       throw "Either login or submit a valid transaction id"
+    }
 
     const payload = {
       txId: nftState.txId,
@@ -72,16 +80,24 @@ export default function Home() {
       fileType: nftState.fileType,
       pricePaid: nftState.pricePaid,
     }
-    localStorageHandler(sessionedUser, payload)
+    const setters = {
+      setAlertMessage: setAlertMessage,
+      setAlertError: setAlertError,
+      executeAlertTransition: executeAlertTransition,
+    }
+    localStorageHandler(sessionedUser, payload, setters)
   }
   const handleLocalStorageReset = () => {
     sessionStorage.clear()
     localStorage.clear()
+    setFormSubmitted(false)
+    setLoaded(false)
     logout()
     setAlertMessage("Local Storage has been reset")
+    executeAlertTransition()
 
-    setTriggerTransition(true)
-    setTimeout(() => setTriggerTransition(false), 3000)
+    // setTriggerTransition(true)
+    // setTimeout(() => setTriggerTransition(false), 3000)
     console.log("cleared")
   }
 
@@ -119,7 +135,10 @@ export default function Home() {
               {formSubmitted && !loaded && <Spinner />}
 
               {loaded && nftState.fileType ? (
-                <DisplayNft nftState={nftState} />
+                <DisplayNft
+                  nftState={nftState}
+                  storageSubmit={handleLocalStorageSubmit}
+                />
               ) : (
                 !formSubmitted && (
                   <TxDataForm
@@ -130,7 +149,11 @@ export default function Home() {
                 )
               )}
 
-              <Fade in={triggerTransition} message={alertMessage} />
+              <Fade
+                in={triggerTransition}
+                message={alertMessage}
+                error={error}
+              />
             </Box>
           </Flex>
         )}
