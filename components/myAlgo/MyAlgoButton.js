@@ -1,20 +1,20 @@
-import { Button } from "theme-ui";
-import MyAlgo from "@randlabs/myalgo-connect";
+import { Button } from "theme-ui"
+import MyAlgo from "@randlabs/myalgo-connect"
 
-export default function MyAlgoButton() {
-  const myAlgoWallet = new MyAlgo();
+export default function MyAlgoButton({ login }) {
+  const myAlgoWallet = new MyAlgo()
   const connectToMyAlgo = async () => {
     try {
-      console.log("hit");
-      const accounts = await myAlgoWallet.connect();
+      const accounts = await myAlgoWallet.connect()
 
-      const addresses = accounts.map((account) => account.address);
-      console.log(addresses);
-      debugger;
+      const addresses = accounts.map((account) => account.address)
+
+      login(addresses[0]) //Note: Is it worth getting the wallet adress from the button and setting the login in a dif component?
+      // setUser(addresses[0])
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
-  };
+  }
 
-  return <Button onClick={() => connectToMyAlgo()}> CLICK ME </Button>;
+  return <Button onClick={() => connectToMyAlgo()}>Connect wallet</Button>
 }
