@@ -16,14 +16,7 @@ import {
   IconButton,
   Date,
 } from "@theme-ui/components"
-
-// utils
-const truncate = (address, amount = 25) => {
-  return (
-    address.slice(0, amount) + "..."
-    // address.slice(address.length - amount, address.length)
-  )
-}
+import { truncate } from "../utils/utils"
 
 const StyledDate = ({ date }) => {
   //focusing on more imporant things first
@@ -96,7 +89,7 @@ export const StyledRow = ({
           </Text>
         </Flex>
 
-        <Flex>
+        <Flex sx={{ justifyContent: "center" }}>
           <Text>{displayedValue}</Text>
         </Flex>
 
@@ -197,6 +190,126 @@ export const StyledNftImage = ({ nftState, storageSubmit }) => {
           Save to Local Storage?
         </Button>
       </Box>
+    </Card>
+  )
+}
+
+export const StyledMiniImageCard = ({ nftState }) => {
+  return (
+    <Card
+      sx={{
+        borderRadius: "3",
+        border: "1px solid",
+        borderColor: "border",
+        width: "100%",
+
+        boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
+        ":hover": {
+          transform: "rotateY(180deg)",
+          "& > img": { visibility: "hidden", objectFit: "cover" },
+          "& > .backFace": {
+            visibility: "visible",
+            transform: "rotateY(180deg)",
+          },
+        },
+        transition: "all 1s",
+        perspective: "1000px",
+
+        postition: "relative",
+        "& > .backFace": { visibility: "hidden" },
+      }}
+    >
+      <Image
+        src={nftState.src}
+        alt="image"
+        sx={{
+          width: "100%",
+          maxHeight: "100%",
+          objectFit: "cover",
+          borderTopLeftRadius: "3",
+          borderBottomLeftRadius: "3",
+
+          position: "absolute",
+        }}
+      />
+
+      <Button
+        className="backFace"
+        sx={{ objectFit: "cover", position: "relative", height: "100%" }}
+      >
+        <Link
+          sx={{ textAlign: "center" }}
+          href={`/${nftState.block.rcv}/${nftState.txId}`}
+        >
+          {" "}
+          See more details
+        </Link>
+      </Button>
+
+      {/* THIS MAKES THE ASSUMPTION THAT THE nftState.block.rcv is the same address used to signed in */}
+    </Card>
+  )
+}
+
+export const StyledMiniVideoCard = ({ nftState }) => {
+  return (
+    <Card
+      sx={{
+        borderRadius: "3",
+        border: "1px solid",
+        borderColor: "border",
+        boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
+        width: "100%",
+        ":hover": {
+          transform: "rotateY(180deg)",
+          "& > video": { visibility: "hidden" },
+          "& > .backFace": {
+            visibility: "visible",
+            transform: "rotateY(180deg)",
+          },
+        },
+        transition: "all 1s",
+        perspective: "1000px",
+
+        postition: "relative",
+        "& > .backFace": { visibility: "hidden" },
+      }}
+    >
+      <video
+        sx={{
+          width: "100%",
+          maxHeight: "100%",
+          objectFit: "cover",
+          borderTopLeftRadius: "3",
+          borderBottomLeftRadius: "3",
+
+          position: "absolute",
+        }}
+        loop
+        autoPlay
+        muted
+        name="media"
+        crossOrigin="anonymous"
+        width="100%"
+      >
+        <source src={nftState.src} type="video/mp4" />
+      </video>
+      {/* {children} */}
+
+      <Button
+        className="backFace"
+        sx={{ height: "100%", objectFit: "cover", position: "relative" }}
+      >
+        <Link
+          sx={{ textAlign: "center" }}
+          href={`/${nftState.block.rcv}/${nftState.txId}`}
+        >
+          {" "}
+          See more details
+        </Link>
+      </Button>
+
+      {/* THIS MAKES THE ASSUMPTION THAT THE nftState.block.rcv is the same address used to signed in */}
     </Card>
   )
 }

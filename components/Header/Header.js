@@ -14,6 +14,7 @@ import { useContext, useEffect } from "react"
 import { UserContext } from "../../Context/UserProvider"
 import { StyledButton } from "../buttons/StyledButtons"
 import { StyledHeaderLink } from "../buttons/StyledLinks"
+import { userTruncator } from "../utils/utils"
 import dynamic from "next/dynamic"
 const AlgoButton = dynamic(() => import("../myAlgo/MyAlgoButton"), {
   ssr: false,
@@ -29,9 +30,6 @@ export default function Header({
     console.log("dont do every time")
     setUserToSession()
   })
-  const userTruncator = (user) => {
-    return user.slice(0, 5) + "..." + user.slice(user.length - 5, user.length)
-  }
 
   const handleCollectionLink = (e) => {
     if (localStorage.getItem(user) === null) {
@@ -44,24 +42,74 @@ export default function Header({
   }
 
   return (
-    <Grid gap={2} columns={[3, "1fr 9fr 1fr"]} sx={{ mb: 3 }}>
-      <Box sx={{ mr: "auto" }}>
+    <Grid
+      sx={{
+        mt: 5,
+        "@media (min-width: 551px)": { gridTemplateColumns: "1fr 15fr 1fr " },
+        gridTemplateRows: "48px",
+        "@media (max-width: 550px)": {
+          gridTemplateColumns: "1fr",
+          "& > .walletBox > .walletBadge": {
+            visibility: "hidden",
+            display: "none",
+          },
+          "& > .walletBox ": {
+            visibility: "hidden",
+            display: "none",
+          },
+          "& > .innerGrid": {
+            margin: 0,
+            justifyContent: "space-evenly",
+          },
+          "& > .algoBox > .algoButton": {
+            visibility: "hidden",
+            display: "none",
+          },
+          "& > .algoBox": {
+            visibility: "hidden",
+            display: "none",
+          },
+        },
+      }}
+    >
+      <Box className="walletBox" sx={{ mr: "auto" }}>
         {user && (
-          <Badge title={user} sx={{ cursor: "pointer" }}>
-            {" "}
-            {userTruncator(user)}{" "}
+          <Badge
+            className="walletBadge"
+            title={user}
+            sx={{ cursor: "pointer" }}
+          >
+            {userTruncator(user)}
           </Badge>
         )}
       </Box>
-      <Flex sx={{ justifyContent: "center", ml: "10%", mt: 3 }}>
-        <Grid gap={2} columns={[3, "1fr 2fr 1fr"]} sx={{ mb: 3 }}>
+      <Flex className="innerGrid" sx={{ justifyContent: "space-evenly" }}>
+        <Grid
+          columns={[3, "1fr 2fr 1fr"]}
+          sx={{
+            "@media (max-width: 550px)": {
+              margin: 0,
+            },
+          }}
+        >
           <Box sx={{ textAlign: "center" }}>
             <StyledHeaderLink href={"/"} defaultMessage="Home" />
           </Box>
 
-          <Box>
-            <Heading> Algorand NFT viewer </Heading>
-          </Box>
+          <Text
+            className="header"
+            sx={{
+              fontWeight: 900,
+              fontSize: "15px",
+              textAlign: "center",
+
+              // "@media (max-width: 550px)": { fontSize: "5vw" },
+            }}
+          >
+            {" "}
+            Algorand NFT Viewer{" "}
+          </Text>
+
           <Box sx={{ textAlign: "center" }}>
             {user && (
               <Button
@@ -78,8 +126,8 @@ export default function Header({
           </Box>
         </Grid>
       </Flex>
-      <Box sx={{ ml: "auto", mr: 1 }}>
-        {!user && <AlgoButton login={login} />}
+      <Box className="algoBox" sx={{ ml: "auto", mr: 1 }}>
+        {!user && <AlgoButton className="algoButton" login={login} />}
       </Box>
     </Grid>
   )

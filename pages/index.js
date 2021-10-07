@@ -80,6 +80,8 @@ export default function Home() {
       name: nftState.name,
       fileType: nftState.fileType,
       pricePaid: nftState.pricePaid,
+      block: nftState.block,
+      timestamp: nftState.timestamp,
     }
     const setters = {
       setAlertMessage: setAlertMessage,
