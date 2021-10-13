@@ -2,11 +2,9 @@
 import { useRouter } from "next/router"
 import { useEffect, useState, useContext } from "react"
 import { Card, Flex, Text, Image, IconButton, Grid } from "@theme-ui/components"
-import { UserContext } from "../../Context/UserProvider"
+
 import Header from "../../components/Header/Header"
 import {
-  StyledNftImage,
-  StyledNftVideo,
   StyledMiniImageCard,
   StyledMiniVideoCard,
 } from "../../components/Display/styles"

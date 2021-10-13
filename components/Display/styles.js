@@ -209,14 +209,14 @@ export const StyledMiniImageCard = ({ nftState }) => {
           "& > img": { visibility: "hidden", objectFit: "cover" },
           "& > .backFace": {
             visibility: "visible",
-            transform: "rotateY(180deg)",
+            transform: "rotateY(0)",
           },
         },
         transition: "all 1s",
         perspective: "1000px",
 
         postition: "relative",
-        "& > .backFace": { visibility: "hidden" },
+        "& > .backFace": { transform: "scale(-1,1)", visibility: "hidden" },
       }}
     >
       <Image
@@ -235,9 +235,10 @@ export const StyledMiniImageCard = ({ nftState }) => {
 
       <Button
         className="backFace"
-        sx={{ objectFit: "cover", position: "relative", height: "100%" }}
+        sx={{ objectFit: "cover", position: "absolute", height: "100%" }}
       >
         <Link
+          className="backFaceButton"
           sx={{ textAlign: "center" }}
           href={`/${nftState.block.rcv}/${nftState.txId}`}
         >
@@ -261,27 +262,29 @@ export const StyledMiniVideoCard = ({ nftState }) => {
         boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
         width: "100%",
         ":hover": {
-          transform: "rotateY(180deg)",
-          "& > video": { visibility: "hidden" },
           "& > .backFace": {
-            visibility: "visible",
-            transform: "rotateY(180deg)",
+            transform: "rotateY(0)",
+          },
+          "& > .frontFace": {
+            transform: "rotateY(-180deg)",
           },
         },
         transition: "all 1s",
         perspective: "1000px",
 
         postition: "relative",
-        "& > .backFace": { visibility: "hidden" },
       }}
     >
       <video
+        className="frontFace"
         sx={{
           width: "100%",
           maxHeight: "100%",
           objectFit: "cover",
           borderTopLeftRadius: "3",
           borderBottomLeftRadius: "3",
+          backfaceVisibility: "hidden",
+          transition: "all 1s",
 
           position: "absolute",
         }}
@@ -298,15 +301,26 @@ export const StyledMiniVideoCard = ({ nftState }) => {
 
       <Button
         className="backFace"
-        sx={{ height: "100%", objectFit: "cover", position: "relative" }}
+        sx={{
+          height: "100%",
+          objectFit: "cover",
+          position: "absolute",
+          backfaceVisibility: "hidden",
+          transform: "rotateY(180deg)",
+          transition: "all 1s",
+        }}
       >
-        <Link
-          sx={{ textAlign: "center" }}
+        See More Details
+        {/* <Link
+          className="backFaceButton"
+          sx={{
+            textAlign: "center",
+          }}
           href={`/${nftState.block.rcv}/${nftState.txId}`}
         >
           {" "}
           See more details
-        </Link>
+        </Link> */}
       </Button>
 
       {/* THIS MAKES THE ASSUMPTION THAT THE nftState.block.rcv is the same address used to signed in */}

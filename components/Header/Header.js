@@ -44,10 +44,12 @@ export default function Header({
   return (
     <Grid
       sx={{
-        mt: 5,
-        "@media (min-width: 551px)": { gridTemplateColumns: "1fr 15fr 1fr " },
+        "@media (min-width: 768px)": {
+          gridTemplateColumns: "1fr 3fr 1fr ",
+        },
+
         gridTemplateRows: "48px",
-        "@media (max-width: 550px)": {
+        "@media (max-width: 767px)": {
           gridTemplateColumns: "1fr",
           "& > .walletBox > .walletBadge": {
             visibility: "hidden",
@@ -59,7 +61,7 @@ export default function Header({
           },
           "& > .innerGrid": {
             margin: 0,
-            justifyContent: "space-evenly",
+            justifyContent: "space-between",
           },
           "& > .algoBox > .algoButton": {
             visibility: "hidden",
@@ -83,24 +85,24 @@ export default function Header({
           </Badge>
         )}
       </Box>
-      <Flex className="innerGrid" sx={{ justifyContent: "space-evenly" }}>
-        <Grid
-          columns={[3, "1fr 2fr 1fr"]}
-          sx={{
-            "@media (max-width: 550px)": {
-              margin: 0,
-            },
-          }}
-        >
-          <Box sx={{ textAlign: "center" }}>
-            <StyledHeaderLink href={"/"} defaultMessage="Home" />
-          </Box>
-
+      {/* <Flex className="innerGrid" sx={{ justifyContent: "space-evenly" }}> */}
+      <Grid
+        columns={[3, "2fr 10fr 2fr"]}
+        sx={{
+          "@media (max-width: 550px)": {
+            margin: 0,
+          },
+        }}
+      >
+        <Box sx={{ textAlign: "center" }}>
+          <StyledHeaderLink href={"/"} defaultMessage="Home" />
+        </Box>
+        <Box sx={{ textAlign: "center" }}>
           <Text
             className="header"
             sx={{
               fontWeight: 900,
-              fontSize: "15px",
+              fontSize: "1.1em",
               textAlign: "center",
 
               // "@media (max-width: 550px)": { fontSize: "5vw" },
@@ -109,23 +111,24 @@ export default function Header({
             {" "}
             Algorand NFT Viewer{" "}
           </Text>
+        </Box>
 
-          <Box sx={{ textAlign: "center" }}>
-            {user && (
-              <Button
-                sx={{ all: "unset" }}
+        <Box sx={{ textAlign: "center" }}>
+          {user && (
+            <Button
+              sx={{ all: "unset" }}
+              onClick={(e) => handleCollectionLink(e)}
+            >
+              <StyledHeaderLink
                 onClick={(e) => handleCollectionLink(e)}
-              >
-                <StyledHeaderLink
-                  onClick={(e) => handleCollectionLink(e)}
-                  href={`/${sessionStorage.getItem("user")}`}
-                  defaultMessage="Collection"
-                ></StyledHeaderLink>
-              </Button>
-            )}
-          </Box>
-        </Grid>
-      </Flex>
+                href={`/${sessionStorage.getItem("user")}`}
+                defaultMessage="Collection"
+              ></StyledHeaderLink>
+            </Button>
+          )}
+        </Box>
+      </Grid>
+      {/* </Flex> */}
       <Box className="algoBox" sx={{ ml: "auto", mr: 1 }}>
         {!user && <AlgoButton className="algoButton" login={login} />}
       </Box>
