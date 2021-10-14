@@ -1,5 +1,10 @@
 /** @jsxImportSource theme-ui */
-import { SwitchTransition, Transition } from "react-transition-group"
+import {
+  SwitchTransition,
+  Transition,
+  CSSTransition,
+} from "react-transition-group"
+import { useRef } from "react"
 
 import {
   Card,
@@ -405,6 +410,7 @@ export const Fade = ({ in: inProp, message, error }) => {
     transition: `opacity ${duration}ms ease-in-out`,
     opacity: 0,
   }
+  const ref = useRef(null)
 
   const transitionStyles = {
     entered: {
@@ -421,9 +427,10 @@ export const Fade = ({ in: inProp, message, error }) => {
     },
   }
   return (
-    <Transition in={inProp} timeout={duration}>
+    <CSSTransition in={inProp} timeout={duration} nodeRef={ref}>
       {(state) => (
         <div
+          ref={ref}
           style={{
             ...defaultStyle,
             ...transitionStyles[state],
@@ -441,7 +448,7 @@ export const Fade = ({ in: inProp, message, error }) => {
           </Alert>
         </div>
       )}
-    </Transition>
+    </CSSTransition>
   )
 }
 

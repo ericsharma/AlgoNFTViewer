@@ -1,7 +1,14 @@
 /** @jsxImportSource theme-ui */
 import Head from "next/head"
 import fetch from "node-fetch"
-import { useState, useEffect, useReducer, useContext } from "react"
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useReducer,
+  useContext,
+} from "react"
 import { handleTxRequest } from "../components/TxDataRequest"
 import TxDataForm from "../components/TxDataForm"
 import { UserContext } from "../Context/UserProvider"
@@ -18,6 +25,7 @@ import { Box, Alert, Flex, Link } from "@theme-ui/components"
 import NftReducer from "../Reducers/NftReducer"
 import { ACTIONS } from "../Reducers/ACTIONS"
 import { localStorageHandler } from "../DataHandlers/LocalStorage"
+import { FancyInput } from "../components/transitions/Transitions"
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false)
@@ -36,7 +44,7 @@ export default function Home() {
     setError(true)
     setTimeout(() => setError(false), 4000)
   }
-
+  // const alertref = React.createRef()
   const [formSubmitted, setFormSubmitted] = useState(false)
 
   const intialState = {
@@ -155,15 +163,17 @@ export default function Home() {
                   />
                 )
               )}
-
-              <Fade
-                in={triggerTransition}
-                message={alertMessage}
-                error={error}
-              />
             </Box>
           </Flex>
         )}
+
+        {/* <FancyInput
+          triggerTransition={triggerTransition}
+          alertMessage={alertMessage}
+          error={error}
+        /> */}
+
+        <Fade in={triggerTransition} message={alertMessage} error={error} />
       </main>
     </div>
   )
