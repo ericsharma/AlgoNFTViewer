@@ -1,9 +1,5 @@
 /** @jsxImportSource theme-ui */
-import {
-  SwitchTransition,
-  Transition,
-  CSSTransition,
-} from "react-transition-group"
+import { CSSTransition } from "react-transition-group"
 import { useRef } from "react"
 
 import {
@@ -60,7 +56,12 @@ export const StyledRow = ({
         <Flex
           sx={{
             display: "grid",
-            gridTemplateColumns: "2fr  7fr",
+            "@media (min-width: 600px)": {
+              gridTemplateColumns: "2fr  7fr",
+            },
+            "@media (max-width: 600px)": {
+              gridTemplateColumns: "3fr  6fr",
+            },
           }}
         >
           <Flex sx={{ alignItems: "center" }}>
@@ -85,7 +86,15 @@ export const StyledRow = ({
       <Flex
         sx={{
           display: "grid",
-          gridTemplateColumns: "2fr 5fr 2fr",
+          // gridTemplateColumns: "2fr 5fr 2fr",
+
+          "@media (min-width: 600px)": {
+            gridTemplateColumns: "2fr 5fr 2fr",
+          },
+
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "3fr 6fr",
+          },
         }}
       >
         <Flex sx={{ alignItems: "center" }}>
@@ -94,8 +103,15 @@ export const StyledRow = ({
           </Text>
         </Flex>
 
-        <Flex sx={{ justifyContent: "center" }}>
-          <Text>{displayedValue}</Text>
+        <Flex
+          sx={{
+            justifyContent: "center",
+            "@media (max-width: 600px)": { display: "none" },
+          }}
+        >
+          <Text sx={{ "@media (max-width: 600px)": { display: "none" } }}>
+            {displayedValue}
+          </Text>
         </Flex>
 
         {address && (
@@ -121,9 +137,17 @@ export const StyledNftImage = ({ nftState, storageSubmit }) => {
   return (
     <Card
       sx={{
+        width: "100%",
+        maxHeight: "100%",
+        objectFit: "cover",
         borderRadius: "3",
         display: "grid",
-        gridTemplateColumns: "3fr 3fr",
+        "@media (min-width: 1000px)": {
+          gridTemplateColumns: "3fr 3fr",
+        },
+        "@media (min-width: 1000px)": {
+          gridTemplateColumns: "3fr 3fr",
+        },
         border: "1px solid",
         borderColor: "border",
         boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
@@ -441,6 +465,7 @@ export const Fade = ({ in: inProp, message, error }) => {
               borderRadius: "3",
               mt: 3,
               bg: error ? "red" : "blue",
+
               // visibility: ` ${visibile}`,
             }}
           >

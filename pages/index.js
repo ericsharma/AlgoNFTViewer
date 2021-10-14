@@ -172,8 +172,10 @@ export default function Home() {
           alertMessage={alertMessage}
           error={error}
         /> */}
-
-        <Fade in={triggerTransition} message={alertMessage} error={error} />
+        <Box sx={{ ml: "30%", mr: "30%" }}>
+          {" "}
+          <Fade in={triggerTransition} message={alertMessage} error={error} />
+        </Box>
       </main>
     </div>
   )
