@@ -9,7 +9,10 @@ import React, {
   useReducer,
   useContext,
 } from "react"
-import { handleTxRequest } from "../components/TxDataRequest"
+import {
+  handleTxRequest,
+  handleAddressRequest,
+} from "../components/TxDataRequest"
 import TxDataForm from "../components/TxDataForm"
 import { UserContext } from "../Context/UserProvider"
 import { StyledButton } from "../components/buttons/StyledButtons"
@@ -34,6 +37,7 @@ export default function Home() {
   const [alertMessage, setAlertMessage] = useState(null)
   const [triggerTransition, setTriggerTransition] = useState(false)
   const [error, setError] = useState(false)
+  const [formInput, setFormInput] = useState(null)
 
   // Put these in a seperate file so you can import between index and collections.
   const executeAlertTransition = () => {
@@ -69,7 +73,17 @@ export default function Home() {
   }
 
   const handleSubmit = () => {
-    handleTxRequest(dispatch, nftState, setLoaded)
+    if (formInput.length === 52) {
+      dispatch({
+        type: ACTIONS.setTxId,
+        payload: { txId: formInput },
+      })
+
+      handleTxRequest(dispatch, nftState, setLoaded)
+    } else {
+      handleAddressRequest(dispatch, nftState, setLoaded, formInput)
+    }
+
     setFormSubmitted(true)
   }
 
@@ -113,10 +127,11 @@ export default function Home() {
   }
 
   const onInputChange = (event) => {
-    dispatch({
-      type: ACTIONS.setTxId,
-      payload: { txId: event.target.value },
-    })
+    setFormInput(event.target.value)
+    // dispatch({
+    //   type: ACTIONS.setTxId,
+    //   payload: { txId: event.target.value },
+    // })
   }
 
   // if (!start) return <Welcome setStart={setStart} />

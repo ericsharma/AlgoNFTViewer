@@ -21,6 +21,7 @@ export default function TxDataForm({ onSubmit, onChange, disabled }) {
         <Button
           onClick={(e) => {
             e.preventDefault()
+
             onSubmit()
           }}
           disabled={disabled}

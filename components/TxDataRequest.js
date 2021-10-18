@@ -146,3 +146,36 @@ export function handleTxRequest(dispatch, nftState, setLoaded) {
     })
   })
 }
+
+function fetchAddressAssets(address) {
+  const addressAssets = fetch(
+    `https://algoexplorerapi.io/v2/accounts/${address}`
+  )
+    .then((res) => res.json())
+    .then((res) => res.assets)
+  return addressAssets
+}
+
+async function checkNftAssets(arr) {
+  const nfts = []
+  for (let asset of arr) {
+    let nft = await getAssetUrl(asset["asset-id"])
+    if (nft["url-b64"].length === 108) {
+      //currencies have a base length of 36 while NFT is 108
+      nfts.push(nft)
+    }
+  }
+  return nfts
+}
+export async function handleAddressRequest(
+  dispatch,
+  nftState,
+  setLoaded,
+  address
+) {
+  const addressAssets = await fetchAddressAssets(address).then()
+
+  const nonZeroAssets = addressAssets.filter((asset) => asset.amount > 0)
+  const nftAssets = await checkNftAssets(nonZeroAssets)
+  console.log(nftAssets)
+}
