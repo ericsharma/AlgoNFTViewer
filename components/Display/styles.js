@@ -169,8 +169,10 @@ export const StyledNftImage = ({ nftState, storageSubmit }) => {
         </Heading>
         <Divider />
         <StyledRow
-          title={"Transaction ID"}
-          value={nftState.txId}
+          title={nftState.txId ? "Transaction ID" : "AssetId"}
+          value={nftState.txId ? nftState.txId : nftState.assetId}
+          // title={"Asset Id"}
+          // value={nftState.assetId}
           address={true}
           divider={true}
           tx={true}
@@ -256,7 +258,7 @@ export const StyledMiniImageCard = ({ nftState, duration = 1 }) => {
         <Link
           className="backFaceButton"
           sx={{ textAlign: "center" }}
-          href={`/${nftState.block.rcv}/${nftState.txId}`}
+          href={`/${nftState.block.rcv}/${nftState.assetId}`}
         >
           {" "}
           See more details
@@ -270,28 +272,7 @@ export const StyledMiniImageCard = ({ nftState, duration = 1 }) => {
 
 export const StyledMiniVideoCard = ({ nftState, duration = 1 }) => {
   return (
-    <CardFlip
-      duration={duration}
-      // sx={{
-      //   borderRadius: "3",
-      //   border: "1px solid",
-      //   borderColor: "border",
-      //   boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
-      //   width: "100%",
-      //   ":hover": {
-      //     "& > .backFace": {
-      //       transform: "rotateY(0)",
-      //     },
-      //     "& > .frontFace > *": {
-      //       transform: "rotateY(-180deg)",
-      //     },
-      //   },
-      //   transition: "all 1s",
-      //   perspective: "1000px",
-
-      //   postition: "relative",
-      // }}
-    >
+    <CardFlip duration={duration}>
       <video
         // sx={{ width: "100%", maxHeight: "100%", objectFit: "cover" }}
         className="frontFace"
@@ -315,7 +296,6 @@ export const StyledMiniVideoCard = ({ nftState, duration = 1 }) => {
       >
         <source src={nftState.src} type="video/mp4" />
       </video>
-      {/* {children} */}
 
       <Button
         // sx={{ height: "100%", objectFit: "cover" }}
@@ -334,7 +314,7 @@ export const StyledMiniVideoCard = ({ nftState, duration = 1 }) => {
           sx={{
             textAlign: "center",
           }}
-          href={`/${nftState.block.rcv}/${nftState.txId}`}
+          href={`/${nftState.block.rcv}/${nftState.assetId}`}
         >
           {" "}
           See more details
@@ -479,7 +459,7 @@ export const Fade = ({ in: inProp, message, error }) => {
 
 export const CardFlip = ({ children, duration }) => {
   const frontAndBack = [...children]
-  debugger
+
   return (
     <Card
       sx={{

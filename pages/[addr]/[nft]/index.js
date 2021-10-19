@@ -6,6 +6,7 @@ import { StyledNftImage } from "../../../components/Display/styles"
 const Nft = () => {
   const router = useRouter()
   const { nft } = router.query
+
   const [targetNft, setTargetNft] = useState(null)
   const [loaded, setLoaded] = useState(false)
   console.log(nft)
@@ -16,9 +17,10 @@ const Nft = () => {
       const addr = sessionStorage.getItem("user")
 
       const collection = JSON.parse(localStorage.getItem(addr))
-      const target = collection.filter((item) => item.txId === nft)
+      const target = collection.filter((item) => item.assetId === Number(nft))
       console.log(target)
       setTargetNft(target[0])
+      debugger
 
       setLoaded(true)
     }

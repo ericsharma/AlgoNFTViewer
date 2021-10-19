@@ -1,5 +1,5 @@
 import { ACTIONS } from "../Reducers/ACTIONS"
-
+const ALGO_EXPLORER_ASAS_ULR = "https://algoexplorerapi.io/idx2/v2/assets"
 // *****GENERAL THOUGHT PROCESS FOR DATA**********
 
 // WHY CREATOR ADRESS NEEDS SPECIAL ATTENTION/HELPER FUNCTIONS
@@ -9,6 +9,9 @@ import { ACTIONS } from "../Reducers/ACTIONS"
 // Filter out the transactions to find the transaction that has algo leaving the escrow account (assuming that the algo leaving escrow goes to creator)
 // dispatch the final creator depending on which of the three above variables are null.
 
+function timeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 const isEscrowActive = (arr) => {
   return arr.length !== 0 ? arr[0].creator : false
 }
@@ -58,6 +61,12 @@ async function getAssetInformation(txId, dispatch) {
   const round = await txData.round
 
   const timestamp = await txData.timestamp
+  // const curxfer = await txData.curxfer
+
+  dispatch({
+    type: ACTIONS.setTimestamp,
+    payload: { timestamp: epochDateConverter(timestamp) },
+  })
 
   const rcv = await txData.curxfer.rcv
   //(theory) closeTo only happens after the auction closes and the money leaves escrow
@@ -84,11 +93,6 @@ async function getAssetInformation(txId, dispatch) {
       : null
 
   const price = await pricePaid(rcv, round)
-
-  dispatch({
-    type: ACTIONS.setTimestamp,
-    payload: { timestamp: epochDateConverter(timestamp) },
-  })
 
   dispatch({
     type: ACTIONS.setPricePaid,
@@ -139,11 +143,12 @@ export function handleTxRequest(dispatch, nftState, setLoaded) {
 
   assetInformation.then((asset) => {
     dispatch({ type: ACTIONS.setSrc, payload: { src: asset.url } })
-    setLoaded(true)
+
     dispatch({ type: ACTIONS.setName, payload: { name: asset.name } })
     typeChecker(asset.url).then((blob) => {
       dispatch({ type: ACTIONS.setFileType, payload: { fileType: blob.type } })
     })
+    setLoaded(true)
   })
 }
 
@@ -160,22 +165,72 @@ async function checkNftAssets(arr) {
   const nfts = []
   for (let asset of arr) {
     let nft = await getAssetUrl(asset["asset-id"])
+
     if (nft["url-b64"].length === 108) {
+      let fileType = await typeChecker(nft.url).then((res) => res.type)
+      nft.fileType = fileType
+
       //currencies have a base length of 36 while NFT is 108
-      nfts.push(nft)
+      nfts.push({ assetId: asset["asset-id"], nft: { nft } })
+      // nfts.push(nft)
     }
   }
   return nfts
+}
+
+async function fetchAddressTransactions(address, assetId) {
+  const url = `https://algoexplorerapi.io/idx2/v2/accounts/${address}/transactions?asset-id=${assetId}`
+
+  const data = await fetch(url).then((res) => res.json())
+
+  const round = await data.transactions[0]["confirmed-round"]
+  const timestamp = await data.transactions[0]["round-time"]
+  const price = await pricePaid(address, round)
+
+  return [price, epochDateConverter(timestamp), round]
+}
+
+async function getCheckedNftPrice(address, arr) {
+  for (let nft of arr) {
+    let priceAndTime = await fetchAddressTransactions(address, nft.assetId)
+    nft.price = priceAndTime[0]
+    nft.timestamp = priceAndTime[1]
+    nft.round = priceAndTime[2]
+  }
+}
+
+function organizeAddressPayload(arr, address) {
+  return arr.map((asset) => {
+    return {
+      assetId: asset.assetId,
+      pricePaid: asset.price,
+      timestamp: asset.timestamp,
+      src: asset.nft.nft.url,
+      name: asset.nft.nft.name,
+      block: {
+        rcv: address,
+        creatorAddress: asset.nft.nft.creator,
+        round: asset.round,
+      },
+      fileType: asset.nft.nft.fileType,
+    }
+  })
 }
 export async function handleAddressRequest(
   dispatch,
   nftState,
   setLoaded,
-  address
+  address,
+  setAddressArray
 ) {
   const addressAssets = await fetchAddressAssets(address).then()
 
   const nonZeroAssets = addressAssets.filter((asset) => asset.amount > 0)
   const nftAssets = await checkNftAssets(nonZeroAssets)
-  console.log(nftAssets)
+  // console.log(nftAssets)
+  await getCheckedNftPrice(address, nftAssets)
+
+  const addressPayload = organizeAddressPayload(nftAssets, address)
+  console.log(addressPayload)
+  setAddressArray(addressPayload)
 }

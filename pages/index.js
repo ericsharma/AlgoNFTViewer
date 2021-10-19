@@ -38,6 +38,9 @@ export default function Home() {
   const [triggerTransition, setTriggerTransition] = useState(false)
   const [error, setError] = useState(false)
   const [formInput, setFormInput] = useState(null)
+  const [addressArray, setAddressArray] = useState(null)
+  const [txSubmitted, setTxSubmitted] = useState(false)
+  const [addressSubmitted, setAddressSubmitted] = useState(false)
 
   // Put these in a seperate file so you can import between index and collections.
   const executeAlertTransition = () => {
@@ -73,18 +76,25 @@ export default function Home() {
   }
 
   const handleSubmit = () => {
-    if (formInput.length === 52) {
-      dispatch({
-        type: ACTIONS.setTxId,
-        payload: { txId: formInput },
-      })
+    debugger
+    if (!formInput) {
+      // dispatch({
+      //   type: ACTIONS.setTxId,
+      //   payload: { txId: formInput },
+      // })
 
       handleTxRequest(dispatch, nftState, setLoaded)
+      setFormSubmitted(true)
     } else {
-      handleAddressRequest(dispatch, nftState, setLoaded, formInput)
+      handleAddressRequest(
+        dispatch,
+        nftState,
+        setLoaded,
+        formInput,
+        setAddressArray
+      )
+      setFormSubmitted(true)
     }
-
-    setFormSubmitted(true)
   }
 
   const handleLocalStorageSubmit = () => {
@@ -97,7 +107,8 @@ export default function Home() {
     }
 
     const payload = {
-      txId: nftState.txId,
+      txId: nftState.txId ? nftState.txId : null,
+      assetId: nftState.assetId,
       src: nftState.src,
       name: nftState.name,
       fileType: nftState.fileType,
@@ -127,7 +138,15 @@ export default function Home() {
   }
 
   const onInputChange = (event) => {
-    setFormInput(event.target.value)
+    if (event.target.value.length === 52) {
+      dispatch({
+        type: ACTIONS.setTxId,
+        payload: { txId: event.target.value },
+      })
+    } else {
+      setFormInput(event.target.value)
+    }
+
     // dispatch({
     //   type: ACTIONS.setTxId,
     //   payload: { txId: event.target.value },

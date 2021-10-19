@@ -1,6 +1,6 @@
 const entryExists = (currentState, newState) => {
-  return currentState.filter((entry) => entry.txId === newState.txId).length !==
-    0
+  return currentState.filter((entry) => entry.assetId === newState.assetId)
+    .length !== 0
     ? true
     : false
 }
