@@ -232,5 +232,7 @@ export async function handleAddressRequest(
 
   const addressPayload = organizeAddressPayload(nftAssets, address)
   console.log(addressPayload)
+
   setAddressArray(addressPayload)
+  setLoaded(true)
 }

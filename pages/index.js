@@ -21,7 +21,7 @@ import ActionButtons from "../components/Nav/ActionButtons"
 import { Spinner } from "@theme-ui/components"
 import DisplayNft from "../components/Display/DisplayNft"
 import Welcome from "../components/Welcome/Welcome"
-import { StyledAlert, Fade } from "../components/Display/styles"
+import { Fade, AddressNftDisplay } from "../components/Display/styles"
 
 import { Box, Alert, Flex, Link } from "@theme-ui/components"
 // import dynamic from "next/dynamic"
@@ -70,21 +70,17 @@ export default function Home() {
 
   const handleFormReset = () => {
     setFormSubmitted(false)
+    setTxSubmitted(false)
+    setAddressSubmitted(false)
     setLoaded(false)
     setAlertMessage("The form has been reset")
     executeAlertTransition()
   }
 
   const handleSubmit = () => {
-    debugger
     if (!formInput) {
-      // dispatch({
-      //   type: ACTIONS.setTxId,
-      //   payload: { txId: formInput },
-      // })
-
       handleTxRequest(dispatch, nftState, setLoaded)
-      setFormSubmitted(true)
+      setTxSubmitted(true)
     } else {
       handleAddressRequest(
         dispatch,
@@ -93,7 +89,7 @@ export default function Home() {
         formInput,
         setAddressArray
       )
-      setFormSubmitted(true)
+      setAddressSubmitted(true)
     }
   }
 
@@ -180,16 +176,22 @@ export default function Home() {
                 storageSubmit={handleLocalStorageSubmit}
                 storageReset={handleLocalStorageReset}
               />
+              {addressSubmitted &&
+                loaded &&
+                addressArray.forEach((nft) => (
+                  <AddressNftDisplay nftstate={nft} />
+                ))}
 
-              {formSubmitted && !loaded && <Spinner />}
-
+              {(txSubmitted || addressSubmitted) && !loaded && <Spinner />}
+              {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
               {loaded && nftState.fileType ? (
-                <DisplayNft
-                  nftState={nftState}
-                  storageSubmit={handleLocalStorageSubmit}
-                />
+                // <DisplayNft
+                //   nftState={nftState}
+                //   storageSubmit={handleLocalStorageSubmit}
+                // />
+                <AddressNftDisplay nftState={nftState} />
               ) : (
-                !formSubmitted && (
+                !(txSubmitted || addressSubmitted) && (
                   <TxDataForm
                     onChange={onInputChange}
                     onSubmit={handleSubmit}
