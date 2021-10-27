@@ -1,4 +1,3 @@
-/** @jsxImportSource theme-ui */
 import { CSSTransition } from "react-transition-group"
 import { useRef } from "react"
 
@@ -15,61 +14,63 @@ import {
   Button,
   Link,
   IconButton,
+  Date,
 } from "@theme-ui/components"
 import { truncate } from "../utils/utils"
+import { Styled } from "@theme-ui/mdx"
 
-export const Fade = ({ in: inProp, message, error }) => {
-  const duration = 500
-  const transition = `opacity ${duration}ms ease-in-out`
+// export const Fade = ({ in: inProp, message, error }) => {
+//   const duration = 500
+//   const transition = `opacity ${duration}ms ease-in-out`
 
-  const defaultStyle = {
-    transition: `opacity ${duration}ms ease-in-out`,
-    opacity: 0,
-  }
-  const ref = useRef(null)
+//   const defaultStyle = {
+//     transition: `opacity ${duration}ms ease-in-out`,
+//     opacity: 0,
+//   }
+//   const ref = useRef(null)
 
-  const transitionStyles = {
-    entered: {
-      transition,
-      opacity: 1,
-    },
-    exiting: {
-      transition,
-      opacity: 0,
-    },
-    exited: {
-      transition,
-      opacity: 0,
-    },
-  }
-  return (
-    <CSSTransition in={inProp} timeout={duration} nodeRef={ref}>
-      {(state) => (
-        <div
-          ref={ref}
-          style={{
-            ...defaultStyle,
-            ...transitionStyles[state],
-          }}
-        >
-          <Alert
-            sx={{
-              borderRadius: "3",
-              mt: 3,
-              bg: error ? "red" : "blue",
+//   const transitionStyles = {
+//     entered: {
+//       transition,
+//       opacity: 1,
+//     },
+//     exiting: {
+//       transition,
+//       opacity: 0,
+//     },
+//     exited: {
+//       transition,
+//       opacity: 0,
+//     },
+//   }
+//   return (
+//     <CSSTransition in={inProp} timeout={duration} nodeRef={ref}>
+//       {(state) => (
+//         <div
+//           ref={ref}
+//           style={{
+//             ...defaultStyle,
+//             ...transitionStyles[state],
+//           }}
+//         >
+//           <Alert
+//             sx={{
+//               borderRadius: "3",
+//               mt: 3,
+//               bg: error ? "red" : "blue",
 
-              // visibility: ` ${visibile}`,
-            }}
-          >
-            {message}
-          </Alert>
-        </div>
-      )}
-    </CSSTransition>
-  )
-}
+//               // visibility: ` ${visibile}`,
+//             }}
+//           >
+//             {message}
+//           </Alert>
+//         </div>
+//       )}
+//     </CSSTransition>
+//   )
+// }
 
-export const CardFlip = ({ children, duration = 1 }) => {
+export const CardFlip = ({ children, duration }) => {
   const frontAndBack = [...children]
 
   return (
@@ -216,61 +217,6 @@ export const StyledCollectionsButtonBackFace = ({ duration = 1, nftState }) => {
   }
 }
 
-const StyledNftInfoBackFace = ({ nftState, duration = 1 }) => {
-  return (
-    <Card
-      className="backFace"
-      sx={{
-        height: "100%",
-        objectFit: "cover",
-        display: "inline-block",
-        // position: "absolute", //I have no Idea why the combination of display inline-block and removing absolute works but it does
-        backfaceVisibility: "hidden",
-        transform: "rotateY(180deg)",
-        transition: `all ${duration}s`,
-      }}
-    >
-      <Heading as="h2" mb={4}>
-        {nftState.name}
-      </Heading>
-      <Divider />
-      <StyledRow
-        title={nftState.txId ? "Transaction ID" : "AssetId"}
-        value={nftState.txId ? nftState.txId : nftState.assetId}
-        // title={"Asset Id"}
-        // value={nftState.assetId}
-        address={true}
-        divider={true}
-        tx={true}
-      />
-      <StyledRow
-        title={"Creator"}
-        value={nftState.block.creatorAddress}
-        address={true}
-        divider={true}
-      />
-      <StyledRow
-        title="Purchaser"
-        value={nftState.block.rcv}
-        address={true}
-        divider={true}
-      />
-      <StyledRow
-        title="Purchase Price"
-        value={nftState.pricePaid}
-        divider={true}
-        price={true}
-      />
-      <StyledRow
-        title="Time of Purchase"
-        value={nftState.timestamp.toString()}
-        divider={true}
-        date={true}
-      />
-    </Card>
-  )
-}
-
 export const StyledImageFrontFace = ({ nftState, duration = 1 }) => {
   return (
     <Image
@@ -397,129 +343,5 @@ export const StyledRow = ({
       </Flex>
       {divider && <Divider />}
     </>
-  )
-}
-
-export const StyledNftImage = ({ nftState, storageSubmit }) => {
-  return (
-    <Card
-      sx={{
-        width: "100%",
-        maxHeight: "100%",
-        objectFit: "cover",
-        borderRadius: "3",
-        display: "grid",
-        "@media (min-width: 1000px)": {
-          gridTemplateColumns: "3fr 3fr",
-        },
-        "@media (min-width: 1000px)": {
-          gridTemplateColumns: "3fr 3fr",
-        },
-        border: "1px solid",
-        borderColor: "border",
-        boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
-      }}
-    >
-      <StyledImage src={nftState.src} />
-      <Box sx={{ p: "3" }}>
-        <StyledNftInformation nftState={nftState} />
-        <Button
-          onClick={storageSubmit}
-          sx={{
-            border: "1px solid",
-            borderColor: "border",
-            textAlign: "center",
-            borderRadius: "0",
-            width: "50%",
-          }}
-        >
-          Save to Local Storage?
-        </Button>
-      </Box>
-    </Card>
-  )
-}
-
-export const StyledMiniImageCard = ({ nftState, duration = 1 }) => {
-  return (
-    <CardFlip duration={duration}>
-      <StyledImageFrontFace duration={duration} nftState={nftState} />
-
-      <StyledCollectionsButtonBackFace
-        duration={duration}
-        nftState={nftState}
-      />
-
-      {/* THIS MAKES THE ASSUMPTION THAT THE nftState.block.rcv is the same address used to signed in */}
-    </CardFlip>
-  )
-}
-
-export const StyledNftVideo = ({ children, nftState, storageSubmit }) => {
-  //decide on whether using children or instantiating the video in child
-
-  return (
-    <Card
-      sx={{
-        borderRadius: "3",
-        display: "grid",
-        gridTemplateColumns: "3fr 3fr",
-        border: "1px solid",
-        borderColor: "border",
-        boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
-      }}
-    >
-      <Box>
-        <video loop autoPlay name="media" crossOrigin="anonymous" width="100%">
-          <source src={nftState.src} type="video/mp4" />
-        </video>
-        {/* {children} */}
-      </Box>
-
-      <Box sx={{ p: "3" }}>
-        <StyledNftInformation nftState={nftState} />
-
-        <Button
-          onClick={storageSubmit}
-          sx={{
-            border: "1px solid",
-            borderColor: "border",
-            textAlign: "center",
-            borderRadius: "0",
-            width: "50%",
-          }}
-        >
-          Save to Local Storage?
-        </Button>
-      </Box>
-    </Card>
-  )
-}
-export const StyledMiniVideoCard = ({ nftState, duration = 1 }) => {
-  return (
-    <CardFlip duration={duration}>
-      <StyledVideoFrontFace nftState={nftState} duration={duration} />
-      <StyledCollectionsButtonBackFace
-        nftState={nftState}
-        duration={duration}
-      />
-    </CardFlip>
-  )
-}
-
-export const AddressImageNftDisplay = ({ nftState, duration = 1 }) => {
-  return (
-    <CardFlip duration={duration}>
-      <StyledImageFrontFace nftState={nftState} />
-      <StyledNftInfoBackFace nftState={nftState} />
-    </CardFlip>
-  )
-}
-export const AddressVideoNftDisplay = ({ nftState, duration = 1 }) => {
-  return (
-    <CardFlip duration={duration}>
-      <StyledVideoFrontFace nftState={nftState} />
-      <StyledNftInfoBackFace nftState={nftState} />
-    </CardFlip>
   )
 }

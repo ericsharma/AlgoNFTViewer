@@ -104,7 +104,7 @@ const space = [
 export const theme = {
   space,
   sizes: space,
-  breakpoints: ["544px", "768px", "1012px", "1280px"],
+  breakpoints: ["365px", "768px", "1012px", "1280px"], //originally first one was 544
   fonts: {
     body: systemFonts,
     heading: systemFonts,
