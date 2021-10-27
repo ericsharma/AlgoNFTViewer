@@ -93,6 +93,7 @@ async function getAssetInformation(txId, dispatch) {
       : null
 
   const price = await pricePaid(rcv, round)
+  debugger
 
   dispatch({
     type: ACTIONS.setPricePaid,
@@ -129,15 +130,29 @@ async function pricePaid(rcv, block) {
     .then((res) => res.json())
     .then((blockData) => blockData.transactions)
 
-  let num
   // ToDo: Lookinto whether differing asset prices in same block is possible
-  for (let transaction of transactions) {
-    if (transaction["tx-type"] === "pay" && transaction["sender"] === rcv) {
-      num = Number(transaction["payment-transaction"]["amount"]) / 1000000.0
-    }
+  // for (let transaction of transactions) {
+  //   if (transaction["tx-type"] === "pay" && transaction["sender"] === rcv) {
+  //     num = Number(transaction["payment-transaction"]["amount"]) / 1000000.0
+  //   }
+  // }
+  const convertedTransactions = transactions.filter(
+    (transaction) =>
+      transaction["tx-type"] === "pay" && transaction["sender"] === rcv
+  )
+
+  // Weird quirk, I ran into nfts that split the payment between two addresses although the buyer only submits one purchase.
+  // When this happens there are mant transactions with the payment-transaction, I add them all together to calculate the purchase price.
+  // There's an extra .001 transaction that shows up in these situations so the boolean accounts for it as to not ruin the UI experience
+  let num = convertedTransactions.length > 1 ? -1000 : 0
+
+  for (let transaction of convertedTransactions) {
+    num += transaction["payment-transaction"].amount
   }
-  return num
+
+  return num / 1000000.0
 }
+
 export function handleTxRequest(dispatch, nftState, setLoaded) {
   const assetInformation = getAssetInformation(nftState.txId, dispatch)
 

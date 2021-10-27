@@ -21,9 +21,10 @@ import ActionButtons from "../components/Nav/ActionButtons"
 import { Spinner } from "@theme-ui/components"
 import DisplayNft from "../components/Display/DisplayNft"
 import Welcome from "../components/Welcome/Welcome"
-import { Fade, AddressNftDisplay } from "../components/Display/styles"
+import { Fade } from "../components/Display/styles"
+import StyledAddressNfts from "../components/Display/MapNfts"
 
-import { Box, Alert, Flex, Link } from "@theme-ui/components"
+import { Box, Alert, Flex, Link, Text } from "@theme-ui/components"
 // import dynamic from "next/dynamic"
 import NftReducer from "../Reducers/NftReducer"
 import { ACTIONS } from "../Reducers/ACTIONS"
@@ -39,8 +40,8 @@ export default function Home() {
   const [error, setError] = useState(false)
   const [formInput, setFormInput] = useState(null)
   const [addressArray, setAddressArray] = useState(null)
-  const [txSubmitted, setTxSubmitted] = useState(false)
-  const [addressSubmitted, setAddressSubmitted] = useState(false)
+
+  const [status, setStatus] = useState(null)
 
   // Put these in a seperate file so you can import between index and collections.
   const executeAlertTransition = () => {
@@ -51,10 +52,8 @@ export default function Home() {
     setError(true)
     setTimeout(() => setError(false), 4000)
   }
-  // const alertref = React.createRef()
-  const [formSubmitted, setFormSubmitted] = useState(false)
 
-  const intialState = {
+  const initialState = {
     src: null,
     txId: null,
     formSubmitted: null,
@@ -66,21 +65,27 @@ export default function Home() {
     timestamp: null,
   }
 
-  const [nftState, dispatch] = useReducer(NftReducer, intialState)
+  const txSubmitted = status === "tx"
+  const addressSubmitted = status === "addr"
+
+  const [nftState, dispatch] = useReducer(NftReducer, initialState)
 
   const handleFormReset = () => {
-    setFormSubmitted(false)
-    setTxSubmitted(false)
-    setAddressSubmitted(false)
+    setStatus("reset")
+    setFormInput(null)
+    setAddressArray(null)
+
     setLoaded(false)
     setAlertMessage("The form has been reset")
+    dispatch({ type: ACTIONS.reset, payload: initialState })
     executeAlertTransition()
   }
 
   const handleSubmit = () => {
     if (!formInput) {
       handleTxRequest(dispatch, nftState, setLoaded)
-      setTxSubmitted(true)
+      setStatus("tx")
+      // setTxSubmitted(true)
     } else {
       handleAddressRequest(
         dispatch,
@@ -89,17 +94,27 @@ export default function Home() {
         formInput,
         setAddressArray
       )
-      setAddressSubmitted(true)
+      setStatus("addr")
+      // setAddressSubmitted(true)
     }
   }
 
   const handleLocalStorageSubmit = () => {
     const sessionedUser = sessionStorage.getItem("user")
-    if (!nftState.txId || !sessionedUser) {
+    if ((!nftState.txId && !addressSubmitted) || !sessionedUser) {
       setAlertError()
       setAlertMessage("Either login or submit a valid transaction id")
       executeAlertTransition()
       throw "Either login or submit a valid transaction id"
+    }
+    debugger
+    if (addressSubmitted && sessionedUser !== formInput) {
+      setAlertError()
+      setAlertMessage(
+        "Sorry, you can only save to a wallet that belongs to you"
+      )
+      executeAlertTransition()
+      throw "Sign in with the right wallet address"
     }
 
     const payload = {
@@ -117,19 +132,19 @@ export default function Home() {
       setAlertError: setAlertError,
       executeAlertTransition: executeAlertTransition,
     }
-    localStorageHandler(sessionedUser, payload, setters)
+    if (!nftState.txId) {
+      localStorageHandler(sessionedUser, addressArray, setters)
+    } else {
+      localStorageHandler(sessionedUser, payload, setters)
+    }
   }
   const handleLocalStorageReset = () => {
     sessionStorage.clear()
     localStorage.clear()
-    setFormSubmitted(false)
     setLoaded(false)
     logout()
     setAlertMessage("Local Storage has been reset")
     executeAlertTransition()
-
-    // setTriggerTransition(true)
-    // setTimeout(() => setTriggerTransition(false), 3000)
     console.log("cleared")
   }
 
@@ -142,14 +157,7 @@ export default function Home() {
     } else {
       setFormInput(event.target.value)
     }
-
-    // dispatch({
-    //   type: ACTIONS.setTxId,
-    //   payload: { txId: event.target.value },
-    // })
   }
-
-  // if (!start) return <Welcome setStart={setStart} />
 
   return (
     <div>
@@ -176,26 +184,22 @@ export default function Home() {
                 storageSubmit={handleLocalStorageSubmit}
                 storageReset={handleLocalStorageReset}
               />
-              {addressSubmitted &&
-                loaded &&
-                addressArray.forEach((nft) => (
-                  <AddressNftDisplay nftstate={nft} />
-                ))}
+              {addressSubmitted && loaded && (
+                <StyledAddressNfts array={addressArray} />
+              )}
 
               {(txSubmitted || addressSubmitted) && !loaded && <Spinner />}
               {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
               {loaded && nftState.fileType ? (
-                // <DisplayNft
-                //   nftState={nftState}
-                //   storageSubmit={handleLocalStorageSubmit}
-                // />
-                <AddressNftDisplay nftState={nftState} />
+                <DisplayNft
+                  nftState={nftState}
+                  storageSubmit={handleLocalStorageSubmit}
+                />
               ) : (
                 !(txSubmitted || addressSubmitted) && (
                   <TxDataForm
                     onChange={onInputChange}
                     onSubmit={handleSubmit}
-                    disabled={formSubmitted}
                   />
                 )
               )}
@@ -203,11 +207,6 @@ export default function Home() {
           </Flex>
         )}
 
-        {/* <FancyInput
-          triggerTransition={triggerTransition}
-          alertMessage={alertMessage}
-          error={error}
-        /> */}
         <Box sx={{ ml: "30%", mr: "30%" }}>
           {" "}
           <Fade in={triggerTransition} message={alertMessage} error={error} />

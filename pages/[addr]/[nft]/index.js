@@ -20,7 +20,6 @@ const Nft = () => {
       const target = collection.filter((item) => item.assetId === Number(nft))
       console.log(target)
       setTargetNft(target[0])
-      debugger
 
       setLoaded(true)
     }

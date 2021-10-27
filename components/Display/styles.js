@@ -507,10 +507,18 @@ export const StyledMiniVideoCard = ({ nftState, duration = 1 }) => {
   )
 }
 
-export const AddressNftDisplay = ({ nftState, duration = 1 }) => {
+export const AddressImageNftDisplay = ({ nftState, duration = 1 }) => {
   return (
     <CardFlip duration={duration}>
       <StyledImageFrontFace nftState={nftState} />
+      <StyledNftInfoBackFace nftState={nftState} />
+    </CardFlip>
+  )
+}
+export const AddressVideoNftDisplay = ({ nftState, duration = 1 }) => {
+  return (
+    <CardFlip duration={duration}>
+      <StyledVideoFrontFace nftState={nftState} />
       <StyledNftInfoBackFace nftState={nftState} />
     </CardFlip>
   )

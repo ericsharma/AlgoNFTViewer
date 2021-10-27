@@ -1,4 +1,6 @@
+import { InitializeColorMode } from "@theme-ui/color-modes"
 import { ACTIONS } from "./ACTIONS"
+
 export default function NftReducer(nftState, action) {
   switch (action.type) {
     case ACTIONS.setAddr:
@@ -29,6 +31,9 @@ export default function NftReducer(nftState, action) {
 
     case ACTIONS.setTimestamp:
       return { ...nftState, timestamp: action.payload.timestamp }
+
+    case ACTIONS.reset:
+      return { ...nftState, ...action.payload }
 
     default:
       throw new Error(`Unhandled type: ${action.type}`)

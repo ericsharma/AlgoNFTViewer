@@ -9,4 +9,5 @@ export const ACTIONS = {
   setBlock: "SET-BLOCK",
   setPricePaid: "SET-AMOUNT-PAID",
   setTimestamp: "SET-TIMESTAMP",
+  reset: "RESET",
 }
