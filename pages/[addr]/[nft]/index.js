@@ -1,7 +1,10 @@
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import Header from "../../../components/Header/Header"
 import { StyledNftImage } from "../../../components/Display/styles"
+import Donations from "../../../components/Header/Donations"
+import { AlertContext } from "../../../components/Alert/AlertProvider"
+import { Fade } from "../../../components/Display/styles"
 
 const Nft = () => {
   const router = useRouter()
@@ -10,6 +13,15 @@ const Nft = () => {
   const [targetNft, setTargetNft] = useState(null)
   const [loaded, setLoaded] = useState(false)
   console.log(nft)
+
+  const {
+    setAlertMessage,
+    alertMessage,
+    setError,
+    executeAlertTransition,
+    triggerTransition,
+    error,
+  } = useContext(AlertContext)
 
   const retrieveLocalStorage = (nft) => {
     if (nft) {
@@ -31,7 +43,12 @@ const Nft = () => {
   return (
     <>
       <Header />
+      <Fade in={triggerTransition} message={alertMessage} error={error} />
       {loaded && <StyledNftImage nftState={targetNft} />}
+      <Donations
+        setAlertMessage={setAlertMessage}
+        executeAlertTransistion={executeAlertTransition}
+      />
     </>
   )
 }
