@@ -56,12 +56,15 @@ export const Fade = ({ in: inProp, message, error }) => {
             sx={{
               borderRadius: "3",
               mt: 3,
+              display: "flex",
+              alignItems: "center",
+
               bg: error ? "red" : "blue",
 
               // visibility: ` ${visibile}`,
             }}
           >
-            {message}
+            <Text sx={{ ml: "auto", mr: "auto" }}>{message}</Text>
           </Alert>
         </div>
       )}

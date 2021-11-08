@@ -15,7 +15,6 @@ import {
 } from "../components/TxDataRequest"
 import TxDataForm from "../components/TxDataForm"
 import { UserContext } from "../Context/UserProvider"
-import { StyledButton } from "../components/buttons/StyledButtons"
 import Header from "../components/Header/Header"
 import ActionButtons from "../components/Nav/ActionButtons"
 import { Spinner } from "@theme-ui/components"
@@ -23,35 +22,34 @@ import DisplayNft from "../components/Display/DisplayNft"
 import Welcome from "../components/Welcome/Welcome"
 import { Fade } from "../components/Display/styles"
 import StyledAddressNfts from "../components/Display/MapNfts"
+import Donations from "../components/Header/Donations"
+import TitleTransition from "../components/Loading/Loading"
+
+import { AlertContext } from "../components/Alert/AlertProvider"
 
 import { Box, Alert, Flex, Link, Text } from "@theme-ui/components"
 // import dynamic from "next/dynamic"
 import NftReducer from "../Reducers/NftReducer"
 import { ACTIONS } from "../Reducers/ACTIONS"
 import { localStorageHandler } from "../DataHandlers/LocalStorage"
-import { FancyInput } from "../components/transitions/Transitions"
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false)
   const { logout } = useContext(UserContext)
   const [start, setStart] = useState(false) // think of something better
-  const [alertMessage, setAlertMessage] = useState(null)
-  const [triggerTransition, setTriggerTransition] = useState(false)
-  const [error, setError] = useState(false)
   const [formInput, setFormInput] = useState(null)
   const [addressArray, setAddressArray] = useState(null)
 
   const [status, setStatus] = useState(null)
 
-  // Put these in a seperate file so you can import between index and collections.
-  const executeAlertTransition = () => {
-    setTriggerTransition(true)
-    setTimeout(() => setTriggerTransition(false), 3000)
-  }
-  const setAlertError = () => {
-    setError(true)
-    setTimeout(() => setError(false), 4000)
-  }
+  const {
+    setAlertMessage,
+    alertMessage,
+    setAlertError,
+    executeAlertTransition,
+    triggerTransition,
+    error,
+  } = useContext(AlertContext)
 
   const initialState = {
     src: null,
@@ -95,7 +93,6 @@ export default function Home() {
         setAddressArray
       )
       setStatus("addr")
-      // setAddressSubmitted(true)
     }
   }
 
@@ -107,15 +104,15 @@ export default function Home() {
       executeAlertTransition()
       throw "Either login or submit a valid transaction id"
     }
-    debugger
-    if (addressSubmitted && sessionedUser !== formInput) {
-      setAlertError()
-      setAlertMessage(
-        "Sorry, you can only save to a wallet that belongs to you"
-      )
-      executeAlertTransition()
-      throw "Sign in with the right wallet address"
-    }
+
+    // if (addressSubmitted && sessionedUser !== formInput) {
+    //   setAlertError()
+    //   setAlertMessage(
+    //     "Sorry, you can only save to a wallet that belongs to you"
+    //   )
+    //   executeAlertTransition()
+    //   throw "Sign in with the right wallet address"
+    // }
 
     const payload = {
       txId: nftState.txId ? nftState.txId : null,
@@ -160,7 +157,7 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div sx={{ overflowY: "auto" }}>
       <Head>
         <title>NFT Viewer</title>
         <meta name="description" content="NFT Viewer" />
@@ -173,22 +170,55 @@ export default function Home() {
           setAlertMessage={setAlertMessage}
           executeAlertTransition={executeAlertTransition}
         />
+        <Box
+          sx={{
+            "@media (min-width: 360px)": {
+              display: "none",
+            },
+            "@media (min-width: 800px)": {
+              display: "revert",
+              ml: "30%",
+              mr: "30%",
+            },
+          }}
+        >
+          {" "}
+          <Fade in={triggerTransition} message={alertMessage} error={error} />
+        </Box>
 
         {!start ? (
           <Welcome setStart={setStart} />
         ) : (
-          <Flex sx={{ justifyContent: "center" }}>
-            <Box sx={{ textAlign: "center" }}>
+          <Flex
+            sx={{
+              justifyContent: "center",
+            }}
+          >
+            {addressSubmitted && loaded && (
+              <StyledAddressNfts array={addressArray} />
+            )}
+            <Box
+              sx={{
+                textAlign: "center",
+                justifyContent: "center",
+                position: "absolute",
+                alignSelf: "flex-start",
+              }}
+            >
               <ActionButtons
                 formReset={handleFormReset}
                 storageSubmit={handleLocalStorageSubmit}
                 storageReset={handleLocalStorageReset}
               />
-              {addressSubmitted && loaded && (
+              {/* {addressSubmitted && loaded && (
                 <StyledAddressNfts array={addressArray} />
-              )}
+              )} */}
 
-              {(txSubmitted || addressSubmitted) && !loaded && <Spinner />}
+              {(txSubmitted || addressSubmitted) && !loaded && (
+                <>
+                  <Spinner /> <TitleTransition interval={2000} />
+                </>
+              )}
               {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
               {loaded && nftState.fileType ? (
                 <DisplayNft
@@ -206,11 +236,15 @@ export default function Home() {
             </Box>
           </Flex>
         )}
-
-        <Box sx={{ ml: "30%", mr: "30%" }}>
+        {/* 
+        <Box sx={{ ml: "41%", bottom: 190, position: "fixed" }}>
           {" "}
           <Fade in={triggerTransition} message={alertMessage} error={error} />
-        </Box>
+        </Box> */}
+        <Donations
+          setAlertMessage={setAlertMessage}
+          executeAlertTransistion={executeAlertTransition}
+        />
       </main>
     </div>
   )

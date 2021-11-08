@@ -12,6 +12,18 @@ const ALGO_EXPLORER_ASAS_ULR = "https://algoexplorerapi.io/idx2/v2/assets"
 function timeout(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+const isRandGalleryNft = (nft) => {
+  return nft["url-b64"] && nft["url-b64"].length === 92 ? true : false
+}
+
+const isDartroomNft = (nft) => {
+  return nft["url-b64"] && nft["url-b64"].length === 72 ? true : false
+}
+
+const isAb2Nft = (nft) => {
+  return nft["url-b64"] && nft["url-b64"].length === 108 ? true : false
+}
 const isEscrowActive = (arr) => {
   return arr.length !== 0 ? arr[0].creator : false
 }
@@ -39,8 +51,23 @@ const epochDateConverter = (timestamp) => {
   date.setUTCSeconds(timestamp)
   return date
 }
+
+const protocolConverter = (url) => {
+  const urlObject = new URL(url)
+
+  return urlObject.protocol === "https:"
+    ? urlObject.href
+    : `https://ipfs.io/ipfs/${urlObject.pathname.slice(2)}`
+}
 async function typeChecker(url) {
-  const blob = await fetch(url).then((res) => res.blob())
+  const urlObject = new URL(url)
+
+  const search =
+    urlObject.protocol === "https:"
+      ? urlObject.href
+      : `https://ipfs.io/ipfs/${urlObject.pathname.slice(2)}`
+
+  const blob = await fetch(search).then((res) => res.blob())
   return blob
 }
 async function getAssetUrl(assetId) {
@@ -93,7 +120,6 @@ async function getAssetInformation(txId, dispatch) {
       : null
 
   const price = await pricePaid(rcv, round)
-  debugger
 
   dispatch({
     type: ACTIONS.setPricePaid,
@@ -150,7 +176,7 @@ async function pricePaid(rcv, block) {
     num += transaction["payment-transaction"].amount
   }
 
-  return num / 1000000.0
+  return Math.round(num / 1000000.0)
 }
 
 export function handleTxRequest(dispatch, nftState, setLoaded) {
@@ -160,6 +186,7 @@ export function handleTxRequest(dispatch, nftState, setLoaded) {
     dispatch({ type: ACTIONS.setSrc, payload: { src: asset.url } })
 
     dispatch({ type: ACTIONS.setName, payload: { name: asset.name } })
+
     typeChecker(asset.url).then((blob) => {
       dispatch({ type: ACTIONS.setFileType, payload: { fileType: blob.type } })
     })
@@ -181,11 +208,24 @@ async function checkNftAssets(arr) {
   for (let asset of arr) {
     let nft = await getAssetUrl(asset["asset-id"])
 
-    if (nft["url-b64"].length === 108) {
+    if (isDartroomNft(nft)) {
+      const nftUrl = await fetch(protocolConverter(nft.url))
+        .then((res) => res.json())
+        .then((res) => res.image)
+
+      nft.url = protocolConverter(nftUrl)
       let fileType = await typeChecker(nft.url).then((res) => res.type)
       nft.fileType = fileType
+      // nft.fileType = "image"
+      nfts.push({ assetId: asset["asset-id"], nft: { nft } })
+    }
 
-      //currencies have a base length of 36 while NFT is 108
+    if (isAb2Nft(nft) || isRandGalleryNft(nft)) {
+      let fileType = await typeChecker(nft.url).then((res) => res.type)
+      nft.fileType = fileType
+      // nft.fileType = "image"
+
+      //currencies have a base length of 36 while NFT is 108 and 72
       nfts.push({ assetId: asset["asset-id"], nft: { nft } })
       // nfts.push(nft)
     }
