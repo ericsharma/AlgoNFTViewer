@@ -2,7 +2,6 @@
 import { useRouter } from "next/router"
 import { useEffect, useState, useContext } from "react"
 import { Card, Flex, Text, Image, IconButton, Grid } from "@theme-ui/components"
-import Donations from "../../components/Header/Donations"
 
 import Header from "../../components/Header/Header"
 import {
@@ -74,7 +73,6 @@ const Collection = () => {
           <MapCollection collection={collection} />
         </Grid>
       )}
-      <Donations />
     </>
   )
 }

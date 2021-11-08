@@ -176,7 +176,6 @@ export const theme = {
       lineHeight: "body",
     },
   },
-  html: { overflow: "hidden" },
   buttons: {
     primary: {
       bg: "text",
