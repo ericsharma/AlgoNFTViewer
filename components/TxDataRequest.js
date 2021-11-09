@@ -205,6 +205,7 @@ function fetchAddressAssets(address) {
 
 async function checkNftAssets(arr) {
   const nfts = []
+
   for (let asset of arr) {
     let nft = await getAssetUrl(asset["asset-id"])
 
