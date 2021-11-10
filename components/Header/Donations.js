@@ -25,10 +25,7 @@ export default function Donations({
   return (
     <Box
       sx={{
-        position: "fixed",
-        bottom: 0,
-
-        width: "100vw",
+        gridArea: "9 / 2 / 10/ 8",
       }}
     >
       <Card

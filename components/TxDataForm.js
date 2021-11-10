@@ -6,14 +6,12 @@ export default function TxDataForm({ onSubmit, onChange, disabled }) {
     console.log(event.key)
   }
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{ gridArea: "3 / 2 / 7 / 8" }}>
       {/* <Text sx={{ textAlign: "center" }}>
         Submit the transaction ID of the NFT Sale
       </Text> */}
       <form>
-        <Text sx={{ mb: 1, mt: 2, textAlign: "center" }}>
-          Enter Tx Id or Wallet Address
-        </Text>
+        <Text>Enter Tx Id or Wallet Address</Text>
         <Input
           onChange={(e) => onChange(e)}
           onKeyPress={(e) => handleKeyPress(e)}

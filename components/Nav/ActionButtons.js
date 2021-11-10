@@ -8,7 +8,14 @@ export default function ActionButtons({
   storageReset,
 }) {
   return (
-    <Flex as="nav" sx={{ width: "100%" }}>
+    <Flex
+      as="nav"
+      sx={{
+        width: "100%",
+        "@media (min-width: 360px)": { gridArea: "2 / 2 / 3 / 8" },
+        "@media (min-width: 800px)": { gridArea: "2 / 3 / 3 / 7" },
+      }}
+    >
       <Button
         onClick={formReset}
         sx={{

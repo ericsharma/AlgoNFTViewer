@@ -42,16 +42,13 @@ export default function StyledAddressNfts({ array }) {
     <>
       <Box
         sx={{
-          mt: "3vw",
           overflowY: "auto",
           "@media (min-width: 360px)": {
-            maxHeight: "73%",
+            gridArea: "3 / 2 / 8 / 8",
           },
           "@media (min-width: 800px)": {
-            maxHeight: "60%",
+            gridArea: "3 / 4 / 8 / 6",
           },
-
-          position: "fixed",
         }}
       >
         {/* <Box sx={{}}>
@@ -65,16 +62,18 @@ export default function StyledAddressNfts({ array }) {
         </Box> */}
         <Box sx={{ mt: 2 }}>
           <Text
-            sx={{
-              "@media (min-width: 360px)": {
-                display: "none",
-              },
-              "@media (min-width: 800px)": {
-                display: "revert",
-                ml: 10,
-                mt: 2,
-              },
-            }}
+            sx={
+              {
+                // "@media (min-width: 360px)": {
+                //   display: "none",
+                // },
+                // "@media (min-width: 800px)": {
+                //   display: "revert",
+                //   ml: 10,
+                //   mt: 2,
+                // },
+              }
+            }
           >
             Hover/Click the NFT to find out more info and scroll to see more.
           </Text>
