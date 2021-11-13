@@ -42,96 +42,101 @@ export default function Header({
   }
 
   return (
-    <Grid
+    <Flex
       sx={{
-        "@media (min-width: 768px)": {
-          gridTemplateColumns: "1fr 3fr 1fr ",
-        },
+        display: "grid",
+        gridTemplateColumns: "repeat(16, 1fr)",
+        gridColumn: "1/17",
 
-        gridTemplateRows: "48px",
-        "@media (max-width: 767px)": {
-          gridTemplateColumns: "1fr",
-          "& > .walletBox > .walletBadge": {
-            visibility: "hidden",
-            display: "none",
-          },
-          "& > .walletBox ": {
-            visibility: "hidden",
-            display: "none",
-          },
-          "& > .innerGrid": {
-            margin: 0,
-            justifyContent: "space-between",
-          },
-          "& > .algoBox > .algoButton": {
-            visibility: "hidden",
-            display: "none",
-          },
-          "& > .algoBox": {
-            visibility: "hidden",
-            display: "none",
-          },
-        },
+        gridRow: "1/2",
       }}
     >
-      <Box className="walletBox" sx={{ mr: "auto" }}>
-        {user && (
+      <Box
+        sx={{
+          textAlign: "center",
+          "@media (min-width: 360px)": { ml: 2, gridColumn: "1/3" },
+          "@media (min-width: 800px)": { gridColumn: "4/6" },
+        }}
+      >
+        <StyledHeaderLink sx={{}} href={"/"} defaultMessage="Home" />
+      </Box>
+
+      <Box
+        sx={{
+          textAlign: "center",
+          "@media (min-width: 360px)": { gridColumn: "6 /14" },
+          "@media (min-width: 800px)": { gridColumn: "6/12" },
+        }}
+      >
+        <Text
+          sx={{
+            fontWeight: 900,
+
+            fontSize: "1em",
+            textAlign: "center",
+          }}
+        >
+          {" "}
+          Algorand NFT Viewer{" "}
+        </Text>
+      </Box>
+
+      {user ? (
+        <Button
+          sx={{
+            all: "unset",
+            "@media (min-width: 360px)": {
+              gridColumn: "-2/-3",
+              alignSelf: "flex-start",
+            },
+            "@media (min-width: 800px)": {
+              gridColumn: "12/14",
+              alignSelf: "flex-start",
+              textAlign: "center",
+            },
+          }}
+          onClick={(e) => handleCollectionLink(e)}
+        >
+          <StyledHeaderLink
+            onClick={(e) => handleCollectionLink(e)}
+            href={`/${sessionStorage.getItem("user")}`}
+            defaultMessage="Collection"
+          ></StyledHeaderLink>
+        </Button>
+      ) : (
+        <Box
+          sx={{
+            "@media (min-width: 360px)": {
+              gridColumn: "-1/-4",
+            },
+
+            "@media (min-width: 800px)": {
+              gridColumn: "-1/-2",
+              alignSelf: "flex-start",
+            },
+          }}
+        >
+          <AlgoButton className="algoButton" login={login} />
+        </Box>
+      )}
+
+      {user && (
+        <Box sx={{ "@media (min-width: 800px)": { gridColumn: "-1" } }}>
           <Badge
             className="walletBadge"
             title={user}
-            sx={{ cursor: "pointer" }}
+            sx={{
+              cursor: "pointer",
+              "@media (min-width: 360px)": { display: "none" },
+              "@media (min-width: 800px)": {
+                display: "inline",
+              },
+            }}
           >
             {userTruncator(user)}
           </Badge>
-        )}
-      </Box>
-      {/* <Flex className="innerGrid" sx={{ justifyContent: "space-evenly" }}> */}
-      <Grid
-        columns={[3, "2fr 10fr 2fr"]}
-        sx={{
-          "@media (max-width: 550px)": {
-            margin: 0,
-          },
-        }}
-      >
-        <Box sx={{ textAlign: "center" }}>
-          <StyledHeaderLink href={"/"} defaultMessage="Home" />
         </Box>
-        <Box sx={{ textAlign: "center" }}>
-          <Text
-            className="header"
-            sx={{
-              fontWeight: 900,
-              fontSize: "1.1em",
-              textAlign: "center",
-
-              // "@media (max-width: 550px)": { fontSize: "5vw" },
-            }}
-          >
-            {" "}
-            Algorand NFT Viewer{" "}
-          </Text>
-        </Box>
-
-        <Box sx={{ textAlign: "center" }}>
-          {user && (
-            <Button
-              sx={{ all: "unset" }}
-              onClick={(e) => handleCollectionLink(e)}
-            >
-              <StyledHeaderLink
-                onClick={(e) => handleCollectionLink(e)}
-                href={`/${sessionStorage.getItem("user")}`}
-                defaultMessage="Collection"
-              ></StyledHeaderLink>
-            </Button>
-          )}
-        </Box>
-      </Grid>
-      {/* </Flex> */}
-      <Box className="algoBox" sx={{ ml: "auto", mr: 1 }}>
-        {!user && <AlgoButton className="algoButton" login={login} />}
-      </Box>
-    </Grid>
+      )}
+    </Flex>
   )
 }

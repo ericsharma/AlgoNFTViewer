@@ -1,4 +1,5 @@
 /** @jsxImportSource theme-ui */
+import HomeGrid from "../components/Display/HomeGrid"
 import Head from "next/head"
 import fetch from "node-fetch"
 import React, {
@@ -156,8 +157,18 @@ export default function Home() {
     }
   }
 
+  if (!start) return <Welcome setStart={setStart} />
+
   return (
-    <div sx={{ overflowY: "auto" }}>
+    <div
+      sx={{
+        width: "100%",
+        height: "100%",
+        margin: "0px",
+        padding: "0px",
+        overflow: "hidden",
+      }}
+    >
       <Head>
         <title>NFT Viewer</title>
         <meta name="description" content="NFT Viewer" />
@@ -165,86 +176,69 @@ export default function Home() {
       </Head>
 
       <main>
-        <Header
-          setAlertError={setAlertError}
-          setAlertMessage={setAlertMessage}
-          executeAlertTransition={executeAlertTransition}
-        />
-        <Box
-          sx={{
-            "@media (min-width: 360px)": {
-              display: "none",
-            },
-            "@media (min-width: 800px)": {
-              display: "revert",
-              ml: "30%",
-              mr: "30%",
-            },
-          }}
-        >
-          {" "}
-          <Fade in={triggerTransition} message={alertMessage} error={error} />
-        </Box>
-
-        {!start ? (
-          <Welcome setStart={setStart} />
-        ) : (
-          <Flex
+        <HomeGrid>
+          <Header
+            setAlertError={setAlertError}
+            setAlertMessage={setAlertMessage}
+            executeAlertTransition={executeAlertTransition}
+          />
+          <Box
             sx={{
-              justifyContent: "center",
+              "@media (min-width: 360px)": { gridArea: "3 / 4 / 4 / 12" },
+              "@media (min-width: 800px)": { gridArea: "3/7/4/9" },
             }}
           >
-            {addressSubmitted && loaded && (
-              <StyledAddressNfts array={addressArray} />
-            )}
+            {" "}
+            <Fade in={triggerTransition} message={alertMessage} error={error} />
+          </Box>
+
+          {addressSubmitted && loaded && (
+            <StyledAddressNfts array={addressArray} />
+          )}
+
+          <ActionButtons
+            formReset={handleFormReset}
+            storageSubmit={handleLocalStorageSubmit}
+            storageReset={handleLocalStorageReset}
+          />
+
+          {(txSubmitted || addressSubmitted) && !loaded && (
             <Box
               sx={{
-                textAlign: "center",
+                "@media (min-width: 360px)": { gridArea: "5 / 1 / 9 / 17" },
+                "@media (min-width: 800px)": { gridArea: "5 / 6 / 9/ 12" },
+                display: "flex",
+                // flexDirection: "column",
                 justifyContent: "center",
-                position: "absolute",
-                alignSelf: "flex-start",
               }}
             >
-              <ActionButtons
-                formReset={handleFormReset}
-                storageSubmit={handleLocalStorageSubmit}
-                storageReset={handleLocalStorageReset}
-              />
-              {/* {addressSubmitted && loaded && (
-                <StyledAddressNfts array={addressArray} />
-              )} */}
-
-              {(txSubmitted || addressSubmitted) && !loaded && (
-                <>
-                  <Spinner /> <TitleTransition interval={2000} />
-                </>
-              )}
-              {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
-              {loaded && nftState.fileType ? (
-                <DisplayNft
-                  nftState={nftState}
-                  storageSubmit={handleLocalStorageSubmit}
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Spinner
+                  size={96}
+                  strokeWidth={1}
+                  sx={{ alignSelf: "center" }}
                 />
-              ) : (
-                !(txSubmitted || addressSubmitted) && (
-                  <TxDataForm
-                    onChange={onInputChange}
-                    onSubmit={handleSubmit}
-                  />
-                )
-              )}
+                <TitleTransition interval={5000} />
+              </Box>
             </Box>
-          </Flex>
-        )}
-        {/* 
-        <Box sx={{ ml: "41%", bottom: 190, position: "fixed" }}>
-          {" "}
-          <Fade in={triggerTransition} message={alertMessage} error={error} />
-        </Box> */}
-        <Donations
-          setAlertMessage={setAlertMessage}
-          executeAlertTransistion={executeAlertTransition}
-        />
+          )}
+          {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
+          {loaded && nftState.fileType ? (
+            <DisplayNft
+              nftState={nftState}
+              storageSubmit={handleLocalStorageSubmit}
+            />
+          ) : (
+            !(txSubmitted || addressSubmitted) && (
+              <TxDataForm onChange={onInputChange} onSubmit={handleSubmit} />
+            )
+          )}
+
+          <Donations
+            setAlertMessage={setAlertMessage}
+            executeAlertTransistion={executeAlertTransition}
+          />
+        </HomeGrid>
       </main>
     </div>
   )

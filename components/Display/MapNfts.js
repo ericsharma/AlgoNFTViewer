@@ -42,46 +42,36 @@ export default function StyledAddressNfts({ array }) {
     <>
       <Box
         sx={{
-          mt: "3vw",
-          overflowY: "auto",
           "@media (min-width: 360px)": {
-            maxHeight: "73%",
+            gridArea: "3 / 2 / 9 / 16",
           },
           "@media (min-width: 800px)": {
-            maxHeight: "60%",
+            gridArea: "3/6/4/12",
           },
-
-          position: "fixed",
         }}
       >
-        {/* <Box sx={{}}>
-          <Fade
-            in={triggerTransition}
-            message={
-              "Hover/Click the NFT to find out more info and scroll to see more."
-            }
-            error={error}
-          />
-        </Box> */}
-        <Box sx={{ mt: 2 }}>
-          <Text
-            sx={{
-              "@media (min-width: 360px)": {
-                display: "none",
-              },
-              "@media (min-width: 800px)": {
-                display: "revert",
-                ml: 10,
-                mt: 2,
-              },
-            }}
-          >
-            Hover/Click the NFT to find out more info and scroll to see more.
-          </Text>
-        </Box>
+        <Fade
+          in={triggerTransition}
+          message={
+            "Hover/Click th NFT to find out more info and scroll to see more."
+          }
+          error={error}
+        />
+      </Box>
+      <Box
+        sx={{
+          overflowY: "auto",
+
+          "@media (min-width: 360px)": {
+            gridArea: "4 / 2 / 9 / 16",
+          },
+          "@media (min-width: 800px)": {
+            gridArea: "4 / 6 / 9 / 12",
+          },
+        }}
+      >
         <MapNfts array={array} />
       </Box>
-      {/* Will look terrible on mobile */}
     </>
   )
 }
