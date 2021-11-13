@@ -12,8 +12,10 @@ export default function ActionButtons({
       as="nav"
       sx={{
         width: "100%",
-        "@media (min-width: 360px)": { gridArea: "2 / 2 / 3 / 8" },
-        "@media (min-width: 800px)": { gridArea: "2 / 3 / 3 / 7" },
+        position: "relative",
+        zIndex: 0,
+        "@media (min-width: 360px)": { gridArea: "2 / 2 / 3 / 16" },
+        "@media (min-width: 800px)": { gridArea: "2 / 7 / 3/ 11" },
       }}
     >
       <Button
@@ -25,6 +27,8 @@ export default function ActionButtons({
           borderRadius: 0,
           borderTopLeftRadius: 50,
           borderBottomLeftRadius: 50,
+          position: "relative",
+          zIndex: 0,
         }}
       >
         Reset Form
@@ -36,6 +40,8 @@ export default function ActionButtons({
           borderColor: "border",
           textAlign: "center",
           borderRadius: "0",
+          position: "relative",
+          zIndex: 0,
         }}
       >
         Save to Local Storage
@@ -49,6 +55,8 @@ export default function ActionButtons({
           borderRadius: 0,
           borderTopRightRadius: 50,
           borderBottomRightRadius: 50,
+          position: "relative",
+          zIndex: 0,
         }}
       >
         Reset Local Storage

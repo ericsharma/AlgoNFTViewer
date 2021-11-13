@@ -25,6 +25,9 @@ export const Fade = ({ in: inProp, message, error }) => {
   const defaultStyle = {
     transition: `opacity ${duration}ms ease-in-out`,
     opacity: 0,
+
+    position: "absolute",
+    zIndex: 10,
   }
   const ref = useRef(null)
 
@@ -59,7 +62,7 @@ export const Fade = ({ in: inProp, message, error }) => {
               display: "flex",
               alignItems: "center",
 
-              bg: error ? "red" : "blue",
+              bg: error ? "red" : "#D5EDD9",
 
               // visibility: ` ${visibile}`,
             }}
@@ -174,8 +177,8 @@ export const StyledVideoFrontFace = ({ nftState, duration = 1 }) => {
         borderBottomLeftRadius: "3",
         backfaceVisibility: "hidden",
         transition: `all ${duration}s`,
-
         position: "absolute",
+        zIndex: 0,
       }}
       loop
       autoPlay
@@ -289,6 +292,8 @@ export const StyledImageFrontFace = ({ nftState, duration = 1 }) => {
         backfaceVisibility: "hidden",
         position: "absolute",
         transition: `all ${duration}s`,
+
+        zIndex: 0,
       }}
     />
   )

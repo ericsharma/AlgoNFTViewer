@@ -184,14 +184,8 @@ export default function Home() {
           />
           <Box
             sx={{
-              "@media (min-width: 360px)": {
-                display: "none",
-              },
-              "@media (min-width: 800px)": {
-                display: "revert",
-                ml: "30%",
-                mr: "30%",
-              },
+              "@media (min-width: 360px)": { gridArea: "3 / 4 / 4 / 12" },
+              "@media (min-width: 800px)": { gridArea: "3/7/4/9" },
             }}
           >
             {" "}
@@ -209,9 +203,24 @@ export default function Home() {
           />
 
           {(txSubmitted || addressSubmitted) && !loaded && (
-            <>
-              <Spinner /> <TitleTransition interval={2000} />
-            </>
+            <Box
+              sx={{
+                "@media (min-width: 360px)": { gridArea: "5 / 1 / 9 / 17" },
+                "@media (min-width: 800px)": { gridArea: "5 / 6 / 9/ 12" },
+                display: "flex",
+                // flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Spinner
+                  size={96}
+                  strokeWidth={1}
+                  sx={{ alignSelf: "center" }}
+                />
+                <TitleTransition interval={5000} />
+              </Box>
+            </Box>
           )}
           {/* nftState.fileType ensures its loaded but nead to figure out how to differentiate this from the newly added address query */}
           {loaded && nftState.fileType ? (

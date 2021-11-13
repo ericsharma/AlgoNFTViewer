@@ -6,7 +6,16 @@ export default function TxDataForm({ onSubmit, onChange, disabled }) {
     console.log(event.key)
   }
   return (
-    <Box sx={{ gridArea: "3 / 2 / 7 / 8" }}>
+    <Box
+      sx={{
+        "@media (min-width: 360px)": {
+          gridArea: "5 / 2 / 9 / 16",
+        },
+        "@media (min-width: 800px)": {
+          gridArea: "4 / 6 / 7 / 12",
+        },
+      }}
+    >
       {/* <Text sx={{ textAlign: "center" }}>
         Submit the transaction ID of the NFT Sale
       </Text> */}
