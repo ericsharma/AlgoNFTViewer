@@ -106,15 +106,6 @@ export default function Home() {
       throw "Either login or submit a valid transaction id"
     }
 
-    // if (addressSubmitted && sessionedUser !== formInput) {
-    //   setAlertError()
-    //   setAlertMessage(
-    //     "Sorry, you can only save to a wallet that belongs to you"
-    //   )
-    //   executeAlertTransition()
-    //   throw "Sign in with the right wallet address"
-    // }
-
     const payload = {
       txId: nftState.txId ? nftState.txId : null,
       assetId: nftState.assetId,
@@ -139,9 +130,13 @@ export default function Home() {
   const handleLocalStorageReset = () => {
     sessionStorage.clear()
     localStorage.clear()
+    setStatus("reset")
     setLoaded(false)
+    setFormInput(null)
+    setAddressArray(null)
     logout()
     setAlertMessage("Local Storage has been reset")
+    dispatch({ type: ACTIONS.reset, payload: initialState })
     executeAlertTransition()
     console.log("cleared")
   }

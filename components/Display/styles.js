@@ -62,7 +62,7 @@ export const Fade = ({ in: inProp, message, error }) => {
               display: "flex",
               alignItems: "center",
 
-              bg: error ? "red" : "#D5EDD9",
+              bg: error ? "red" : "green",
 
               // visibility: ` ${visibile}`,
             }}
@@ -412,26 +412,25 @@ export const StyledNftImage = ({ nftState, storageSubmit }) => {
   return (
     <Card
       sx={{
-        width: "100%",
-        maxHeight: "100%",
-        objectFit: "cover",
         borderRadius: "3",
         display: "grid",
-        "@media (min-width: 1000px)": {
-          gridTemplateColumns: "3fr 3fr",
+
+        "@media (min-width: 360px)": {
+          gridArea: "4/2/9/16",
         },
-        "@media (min-width: 1000px)": {
-          gridTemplateColumns: "3fr 3fr",
+        "@media (min-width: 800px)": {
+          gridArea: "4/4/4/16",
         },
         border: "1px solid",
         borderColor: "border",
         boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
       }}
     >
-      <StyledImage src={nftState.src} />
-      <Box sx={{ p: "3" }}>
-        <StyledNftInformation nftState={nftState} />
-        <Button
+      <Flex>
+        <StyledImage src={nftState.src} />
+        <Box sx={{ p: "3" }}>
+          <StyledNftInformation nftState={nftState} />
+          {/* <Button
           onClick={storageSubmit}
           sx={{
             border: "1px solid",
@@ -442,8 +441,9 @@ export const StyledNftImage = ({ nftState, storageSubmit }) => {
           }}
         >
           Save to Local Storage?
-        </Button>
-      </Box>
+        </Button> */}
+        </Box>
+      </Flex>
     </Card>
   )
 }
@@ -469,24 +469,49 @@ export const StyledNftVideo = ({ children, nftState, storageSubmit }) => {
   return (
     <Card
       sx={{
-        borderRadius: "3",
         display: "grid",
-        gridTemplateColumns: "3fr 3fr",
+
+        "@media (min-width: 360px)": {
+          gridArea: "4/2/9/16",
+        },
+        "@media (min-width: 800px)": {
+          gridArea: "4/4/4/16",
+        },
+
+        borderRadius: "3",
+
         border: "1px solid",
         borderColor: "border",
         boxShadow: "0 8px 16px -4px rgba(0,0,0,.1)",
       }}
     >
-      <Box>
-        <video loop autoPlay name="media" crossOrigin="anonymous" width="100%">
-          <source src={nftState.src} type="video/mp4" />
-        </video>
+      <Flex
+        sx={{
+          "@media (min-width: 360px)": {
+            gridArea: "4/2/9/16",
+          },
+          "@media (min-width: 800px)": {
+            gridArea: "4/4/4/16",
+          },
+        }}
+      >
+        <Box>
+          <video
+            loop
+            autoPlay
+            name="media"
+            crossOrigin="anonymous"
+            // sx={{ maxHeight: "50%" }}
+          >
+            <source src={nftState.src} type="video/mp4" />
+          </video>
+        </Box>
+
         {/* {children} */}
-      </Box>
 
-      <Box sx={{ p: "3" }}>
-        <StyledNftInformation nftState={nftState} />
-
+        <Box sx={{ p: "3" }}>
+          <StyledNftInformation nftState={nftState} />
+          {/* 
         <Button
           onClick={storageSubmit}
           sx={{
@@ -498,8 +523,9 @@ export const StyledNftVideo = ({ children, nftState, storageSubmit }) => {
           }}
         >
           Save to Local Storage?
-        </Button>
-      </Box>
+        </Button> */}
+        </Box>
+      </Flex>
     </Card>
   )
 }

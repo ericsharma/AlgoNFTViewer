@@ -1,10 +1,10 @@
 import { useRouter } from "next/router"
 import { useEffect, useState, useContext } from "react"
 import Header from "../../../components/Header/Header"
-import { StyledNftImage } from "../../../components/Display/styles"
 import Donations from "../../../components/Header/Donations"
 import { AlertContext } from "../../../components/Alert/AlertProvider"
 import { Fade } from "../../../components/Display/styles"
+import DisplayNft from "../../../components/Display/DisplayNft"
 
 const Nft = () => {
   const router = useRouter()
@@ -44,7 +44,7 @@ const Nft = () => {
     <>
       <Header />
       <Fade in={triggerTransition} message={alertMessage} error={error} />
-      {loaded && <StyledNftImage nftState={targetNft} />}
+      {loaded && <DisplayNft nftState={targetNft} />}
       <Donations
         setAlertMessage={setAlertMessage}
         executeAlertTransistion={executeAlertTransition}

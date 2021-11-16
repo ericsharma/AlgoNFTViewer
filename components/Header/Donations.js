@@ -72,7 +72,7 @@ export default function Donations({
               },
             }}
           >
-            QD2E5LWLAYAJLWQNF2CPUM23OZ347Z6FMDMQPLMIW7VYK5B2IES4Z2S57U
+            KMMMWFREPH7YU65AQASI5MVU7P2JWDMVASWDRMURELHZA4IDM2IIV66SWE
           </Text>
           <IconButton onClick={handleCopy}>
             <Image alt="Copy Icon" src={"/copy.svg"}></Image>
